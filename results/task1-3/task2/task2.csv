@@ -1,0 +1,10 @@
+run,stats_file,l1_size_kb,l1_block_size,l1_associativity,l1_replacement,l2_size_kb,l2_block_size,l2_associativity,l2_replacement,l1_accesses,l1_misses,l1_miss_rate,l2_accesses,l2_misses,l2_miss_rate,dram_accesses,amat
+1,results/task1-3/task2/task2-0001-l1-2kb-64b-1way-random.stats,2,64,1,random,,,,,2678641,210259,0.07849465456550542,0,0,0.0,0,1.7849465456550542
+2,results/task1-3/task2/task2-0002-l1-2kb-64b-1way-lru.stats,2,64,1,lru,,,,,2678618,206281,0.07701023438205822,0,0,0.0,0,1.7701023438205823
+3,results/task1-3/task2/task2-0003-l1-2kb-64b-1way-plru.stats,2,64,1,plru,,,,,2678641,207186,0.0773474310293914,0,0,0.0,0,1.773474310293914
+4,results/task1-3/task2/task2-0004-l1-4kb-64b-2way-random.stats,4,64,2,random,,,,,2678611,113337,0.04231185491286342,0,0,0.0,0,1.4231185491286342
+5,results/task1-3/task2/task2-0005-l1-4kb-64b-2way-lru.stats,4,64,2,lru,,,,,2678641,90178,0.033665578926030025,0,0,0.0,0,1.3366557892603002
+6,results/task1-3/task2/task2-0006-l1-4kb-64b-2way-plru.stats,4,64,2,plru,,,,,2678641,90178,0.033665578926030025,0,0,0.0,0,1.3366557892603002
+7,results/task1-3/task2/task2-0007-l1-8kb-64b-4way-random.stats,8,64,4,random,,,,,2678611,59879,0.02235449641623961,0,0,0.0,0,1.223544964162396
+8,results/task1-3/task2/task2-0008-l1-8kb-64b-4way-lru.stats,8,64,4,lru,,,,,2678610,50358,0.018800049279290378,0,0,0.0,0,1.1880004927929038
+9,results/task1-3/task2/task2-0009-l1-8kb-64b-4way-plru.stats,8,64,4,plru,,,,,2678610,52267,0.019512732349987495,0,0,0.0,0,1.195127323499875

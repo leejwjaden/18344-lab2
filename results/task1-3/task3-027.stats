@@ -1,0 +1,9 @@
+accesses: 2678611
+hits: 2626496
+misses: 52115
+miss_rate: 0.019456
+l2_accesses: 52115
+l2_hits: 46004
+l2_misses: 6111
+l2_miss_rate: 0.11726
+dram_accesses: 6111

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600"><rect width="100%" height="100%" fill="white"/><text x="500" y="28" text-anchor="middle" font-family="sans-serif" font-size="18">Task 3 Two-Level AMAT by L1 associativity</text>
+<line x1="80" y1="510.0" x2="950" y2="510.0" stroke="#ddd"/>
+<text x="72" y="514.0" text-anchor="end" font-size="11">1.479</text>
+<line x1="80" y1="419.0" x2="950" y2="419.0" stroke="#ddd"/>
+<text x="72" y="423.0" text-anchor="end" font-size="11">1.773</text>
+<line x1="80" y1="328.0" x2="950" y2="328.0" stroke="#ddd"/>
+<text x="72" y="332.0" text-anchor="end" font-size="11">2.067</text>
+<line x1="80" y1="237.0" x2="950" y2="237.0" stroke="#ddd"/>
+<text x="72" y="241.0" text-anchor="end" font-size="11">2.361</text>
+<line x1="80" y1="146.0" x2="950" y2="146.0" stroke="#ddd"/>
+<text x="72" y="150.0" text-anchor="end" font-size="11">2.655</text>
+<line x1="80" y1="55.0" x2="950" y2="55.0" stroke="#ddd"/>
+<text x="72" y="59.0" text-anchor="end" font-size="11">2.949</text>
+<line x1="80.0" y1="55" x2="80.0" y2="510" stroke="#eee"/>
+<text x="80.0" y="530" text-anchor="middle" font-size="11">1-way</text>
+<line x1="370.0" y1="55" x2="370.0" y2="510" stroke="#eee"/>
+<text x="370.0" y="530" text-anchor="middle" font-size="11">2-way</text>
+<line x1="950.0" y1="55" x2="950.0" y2="510" stroke="#eee"/>
+<text x="950.0" y="530" text-anchor="middle" font-size="11">4-way</text>
+<line x1="80" y1="510" x2="950" y2="510" stroke="black"/>
+<line x1="80" y1="55" x2="80" y2="510" stroke="black"/>
+<text x="510" y="580" text-anchor="middle" font-size="13">Associativity</text>
+<text x="18" y="280" transform="rotate(-90 18 280)" text-anchor="middle" font-size="13">AMAT</text>
+<polyline points="370.0,216.2 950.0,279.2" fill="none" stroke="#1f77b4" stroke-width="2"/>
+<circle cx="370.0" cy="216.2" r="3" fill="#1f77b4"/>
+<circle cx="950.0" cy="279.2" r="3" fill="#1f77b4"/>
+<line x1="610" y1="65" x2="624" y2="65" stroke="#1f77b4"/><text x="628" y="69" font-size="10">L2 256KB/4w random</text>
+<polyline points="370.0,253.8 950.0,318.0" fill="none" stroke="#ff7f0e" stroke-width="2"/>
+<circle cx="370.0" cy="253.8" r="3" fill="#ff7f0e"/>
+<circle cx="950.0" cy="318.0" r="3" fill="#ff7f0e"/>
+<line x1="780" y1="65" x2="794" y2="65" stroke="#ff7f0e"/><text x="798" y="69" font-size="10">L2 256KB/4w lru</text>
+<polyline points="370.0,262.7 950.0,314.9" fill="none" stroke="#2ca02c" stroke-width="2"/>
+<circle cx="370.0" cy="262.7" r="3" fill="#2ca02c"/>
+<circle cx="950.0" cy="314.9" r="3" fill="#2ca02c"/>
+<line x1="610" y1="83" x2="624" y2="83" stroke="#2ca02c"/><text x="628" y="87" font-size="10">L2 256KB/4w plru</text>
+<polyline points="370.0,284.2 950.0,328.4" fill="none" stroke="#d62728" stroke-width="2"/>
+<circle cx="370.0" cy="284.2" r="3" fill="#d62728"/>
+<circle cx="950.0" cy="328.4" r="3" fill="#d62728"/>
+<line x1="780" y1="83" x2="794" y2="83" stroke="#d62728"/><text x="798" y="87" font-size="10">L2 512KB/8w random</text>
+<polyline points="370.0,291.1 950.0,343.9" fill="none" stroke="#9467bd" stroke-width="2"/>
+<circle cx="370.0" cy="291.1" r="3" fill="#9467bd"/>
+<circle cx="950.0" cy="343.9" r="3" fill="#9467bd"/>
+<line x1="610" y1="101" x2="624" y2="101" stroke="#9467bd"/><text x="628" y="105" font-size="10">L2 512KB/8w lru</text>
+<polyline points="370.0,310.3 950.0,343.2" fill="none" stroke="#8c564b" stroke-width="2"/>
+<circle cx="370.0" cy="310.3" r="3" fill="#8c564b"/>
+<circle cx="950.0" cy="343.2" r="3" fill="#8c564b"/>
+<line x1="780" y1="101" x2="794" y2="101" stroke="#8c564b"/><text x="798" y="105" font-size="10">L2 512KB/8w plru</text>
+<polyline points="370.0,401.9 950.0,454.4" fill="none" stroke="#e377c2" stroke-width="2"/>
+<circle cx="370.0" cy="401.9" r="3" fill="#e377c2"/>
+<circle cx="950.0" cy="454.4" r="3" fill="#e377c2"/>
+<line x1="610" y1="119" x2="624" y2="119" stroke="#e377c2"/><text x="628" y="123" font-size="10">L2 1024KB/8w random</text>
+<polyline points="370.0,423.7 950.0,466.0" fill="none" stroke="#7f7f7f" stroke-width="2"/>
+<circle cx="370.0" cy="423.7" r="3" fill="#7f7f7f"/>
+<circle cx="950.0" cy="466.0" r="3" fill="#7f7f7f"/>
+<line x1="780" y1="119" x2="794" y2="119" stroke="#7f7f7f"/><text x="798" y="123" font-size="10">L2 1024KB/8w lru</text>
+<polyline points="370.0,430.6 950.0,464.0" fill="none" stroke="#bcbd22" stroke-width="2"/>
+<circle cx="370.0" cy="430.6" r="3" fill="#bcbd22"/>
+<circle cx="950.0" cy="464.0" r="3" fill="#bcbd22"/>
+<line x1="610" y1="137" x2="624" y2="137" stroke="#bcbd22"/><text x="628" y="141" font-size="10">L2 1024KB/8w plru</text>
+</svg>

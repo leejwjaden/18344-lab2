@@ -1,0 +1,187 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+\lstset{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  breaklines=true
+}
+
+\title{Lab 2: Memory Hierarchy\\Progress Summary}
+\author{}
+\date{October 21, 2026}
+
+\begin{document}
+\maketitle
+
+\section{Lab premise}
+
+Lab 2 asks us to build a software model of a processor memory hierarchy and use it
+to study cache design. The long-term goal is to choose a practical two-level
+cache organization that provides low Average Memory Access Time (AMAT) while
+keeping area and power reasonable.
+
+The lab progresses through four stages:
+\begin{enumerate}[leftmargin=*]
+  \item Implement a configurable set-associative cache.
+  \item Compare random, LRU, bit-PLRU, and other replacement policies.
+  \item Build a parameterized L1/L2 cache hierarchy.
+  \item Search the design space under a total 5 MB cache-storage budget, using
+        benchmark results and Destiny hardware-cost estimates.
+\end{enumerate}
+
+The central tradeoff is that larger blocks, greater associativity, and larger
+caches can reduce misses, but can also increase access latency, area, leakage
+power, dynamic power, and tag-storage overhead.
+
+\section{Repository and execution model}
+
+The project contains a Pin-based instrumentation framework:
+\begin{itemize}[leftmargin=*]
+  \item \texttt{memory-hierarchy.cpp} instruments every executed memory
+        operand. Reads call \texttt{mhLoad}; writes call \texttt{mhStore}.
+  \item \texttt{cache.h} declares the cache model and the interface called by
+        the Pin instrumentation.
+  \item \texttt{cache.cpp} implements the cache model.
+  \item \texttt{makefile} and \texttt{makefile.rules} describe how the Pin
+        tool is built.
+  \item The PDF writeup describes the required experiments and analysis.
+\end{itemize}
+
+The runtime flow is:
+\begin{verbatim}
+benchmark instruction
+        -> Pin memory instrumentation
+        -> mhLoad() or mhStore()
+        -> simulated cache
+        -> statistics
+        -> memhier.stats at program termination
+\end{verbatim}
+
+\section{Work completed}
+
+\subsection{\texttt{cache.h}}
+
+The header now defines a first single-cache abstraction:
+\begin{itemize}[leftmargin=*]
+  \item \texttt{CacheLine}, containing a valid bit and tag;
+  \item \texttt{CacheStats}, containing accesses, hits, and misses;
+  \item \texttt{Cache}, parameterized by capacity, block size, and
+        associativity;
+  \item vectors representing sets and ways;
+  \item a per-set victim pointer for temporary round-robin replacement;
+  \item \texttt{mhInit()} and \texttt{mhPrintStats()} for Pin integration;
+  \item the existing \texttt{mhLoad()} and \texttt{mhStore()} entry points.
+\end{itemize}
+
+\subsection{\texttt{cache.cpp}}
+
+The first working cache implementation is complete. It performs the following:
+\begin{enumerate}[leftmargin=*]
+  \item Validates cache dimensions.
+  \item Computes the number of blocks and sets.
+  \item Allocates each set with the requested number of ways.
+  \item Converts an address to a block address.
+  \item Computes the set index and tag:
+\begin{verbatim}
+block address = address / block size
+set index     = block address % number of sets
+tag           = block address / number of sets
+\end{verbatim}
+  \item Searches every way in the selected set for a matching valid tag.
+  \item Records hits and misses.
+  \item Uses an invalid way before evicting a valid line.
+  \item Uses simple round-robin replacement when a set is full.
+  \item Splits an access that crosses a block boundary into multiple block
+        accesses.
+  \item Prints accesses, hits, misses, and miss rate.
+\end{enumerate}
+
+For example, an 8-byte access beginning at byte 60 in a cache with 16-byte
+blocks touches two simulated cache blocks.
+
+\subsection{\texttt{memory-hierarchy.cpp}}
+
+The existing Pin instrumentation was preserved. The following integration was
+added:
+\begin{itemize}[leftmargin=*]
+  \item After Pin parses command-line arguments, \texttt{mhInit()} is called.
+  \item \texttt{-l1c} is converted from kilobytes to bytes.
+  \item \texttt{-l1b} supplies the block size.
+  \item \texttt{-l1a} supplies the associativity.
+  \item At program termination, \texttt{Fini()} calls \texttt{mhPrintStats()}.
+\end{itemize}
+
+The current default configuration is equivalent to:
+\begin{lstlisting}
+capacity:      2 KB
+block size:    64 bytes
+associativity: 2-way
+\end{lstlisting}
+
+\section{Validation performed}
+
+The implementation was compiled independently of Pin with:
+\begin{lstlisting}
+c++ -std=c++11 -Wall -Wextra -pedantic -I. cache.cpp cache_test.cpp
+\end{lstlisting}
+
+A deterministic test exercised:
+\begin{itemize}[leftmargin=*]
+  \item a repeated access to the same block;
+  \item an access within an already cached block;
+  \item a store crossing a block boundary;
+  \item the \texttt{mhInit()} and \texttt{mhPrintStats()} interface.
+\end{itemize}
+
+The resulting statistics were:
+\begin{lstlisting}
+accesses: 4
+hits: 1
+misses: 3
+miss_rate: 0.75
+\end{lstlisting}
+
+This confirms that the cache can be configured through the public interface,
+that repeated block accesses hit, and that a boundary-crossing access is
+counted once for each block touched.
+
+\section{Current status and limitations}
+
+The project currently has a correct first single-cache milestone, but it is not
+yet the completed lab. The following work remains:
+\begin{itemize}[leftmargin=*]
+  \item Run the actual Pin tool on a small program and verify
+        \texttt{memhier.stats}.
+  \item Replace the temporary round-robin policy with random, LRU, and bit-PLRU.
+  \item Add load/store policy decisions such as write-back or write-through and
+        write-allocate behavior.
+  \item Add L2 and DRAM behavior.
+  \item Add latency and AMAT accounting.
+  \item Connect Destiny area, leakage-power, dynamic-power, and latency data.
+  \item Build benchmark automation, design-space search, Pareto-frontier plots,
+        and sensitivity studies.
+\end{itemize}
+
+The actual Pin build/run has not yet been performed in this work session because
+the Pin kit location and executable test workload have not been configured.
+The cache implementation has instead been validated with a standalone C++
+test.
+
+\section{Recommended next step}
+
+The next task is to verify the instrumented Pin path with a very small test
+program. After that, use the existing L1 knobs for experiments. Only once the
+single-cache hit/miss behavior is trusted should replacement policies, L2, AMAT,
+and design-space exploration be added.
+
+\end{document}
