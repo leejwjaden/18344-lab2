@@ -81,29 +81,46 @@ def run(command, cwd, logfile, stdin=None, env=None, timeout=None):
             code, ' '.join(map(str, command)), logfile))
 
 
-def walk_find(roots, names, max_depth=7, limit=5000):
+def walk_find(roots, names, max_depth=7, limit=5000, issues=None):
     """Bounded discovery; never walk all of AFS or the whole filesystem."""
-    found, visited = [], set()
+    found, visited, seen_files = [], {}, set()
+    issues = issues if issues is not None else []
     for root in roots:
         count = 0
         root = Path(root).expanduser()
         if not root.is_dir():
             continue
-        for directory, dirs, files in os.walk(str(root)):
+        def onerror(error):
+            issues.append(str(error))
+        for directory, dirs, files in os.walk(str(root), followlinks=True, onerror=onerror):
             p = Path(directory)
-            resolved = str(p.resolve())
-            if resolved in visited:
+            depth = len(p.relative_to(root).parts)
+            remaining = max_depth - depth
+            try:
+                resolved = str(p.resolve())
+            except (OSError, RuntimeError) as error:
+                issues.append(str(error))
                 dirs[:] = []
                 continue
-            visited.add(resolved)
+            # A broad earlier root may have hit its depth limit here. A later,
+            # more specific root must be allowed to search farther below it.
+            # The remaining-depth comparison also breaks symbolic-link cycles.
+            if visited.get(resolved, -1) >= remaining or resolved in (
+                    '/', '/afs', '/home', '/proc', '/sys', '/dev'):
+                dirs[:] = []
+                continue
+            visited[resolved] = remaining
             count += 1
             if count > limit:
+                issues.append('Directory limit ({}) reached under {}'.format(limit, root))
                 break
-            depth = len(p.relative_to(root).parts)
             dirs[:] = sorted(d for d in dirs if not d.startswith('.') and d not in (
                 'node_modules', '__pycache__', 'src', 'data', 'Docs', 'doc',
                 'build', 'result', 'results', 'lab2-output')) if depth < max_depth else []
-            found.extend(p / name for name in names if name in files)
+            for name in names:
+                if name in files and (resolved, name) not in seen_files:
+                    found.append(p / name)
+                    seen_files.add((resolved, name))
     return found
 
 
@@ -114,6 +131,8 @@ def discovery_roots(settings):
     for key in ('SPEC', 'SPEC_ROOT', 'PIN_ROOT', 'DESTINY_ROOT'):
         if os.environ.get(key):
             roots.insert(0, Path(os.environ[key]))
+    if settings.get('spec_root'):
+        roots.insert(0, Path(settings['spec_root']))
     for name in ('pin', 'runcpu', 'destiny'):
         exe = shutil.which(name)
         if exe:
@@ -128,6 +147,54 @@ def discovery_roots(settings):
         roots.append(course)
     roots.extend([Path('/opt'), Path('/usr/local')])
     return list(dict.fromkeys(str(p) for p in roots))
+
+
+def discover_files(settings, out):
+    roots = discovery_roots(settings)
+    issues = []
+    names = ('pin', 'destiny', 'sample_SRAM.cell', 'speccmds.cmd', 'runcpu', 'shrc')
+    found = walk_find(roots, names, issues=issues)
+    # Search installations directly as well as from their ancestor directories.
+    installations = [p.parent.parent for p in found if p.name == 'runcpu']
+    installations += [p.parent for p in found if p.name == 'shrc']
+    specific = [str(p / 'benchspec/CPU') for p in installations if (p / 'benchspec/CPU').is_dir()]
+    if specific:
+        found += walk_find(specific, ('speccmds.cmd',), issues=issues)
+        roots += specific
+    found = list(dict.fromkeys(found))
+    size = settings.get('input_size', 'test')
+    workloads = []
+    for p in found:
+        if p.name != 'speccmds.cmd' or not re.search(r'(gcc|leela)', str(p), re.I):
+            continue
+        expected = any(n in str(p) for n in ('602.gcc_s', '641.leela_s'))
+        entry = {'path': str(p), 'requested_speed_and_size': expected and 'run_base_' + size in str(p)}
+        try:
+            entry['commands'] = len(parse_speccmds(p))
+        except (RuntimeError, ValueError, OSError) as error:
+            entry['error'] = str(error)
+        workloads.append(entry)
+    report = {'searched_roots': roots, 'requested_input_size': size,
+              'environment': {k: os.environ.get(k, '') for k in ('SPEC', 'SPEC_ROOT', 'SPEC_CONFIG', 'PIN_ROOT')},
+              'tools': {name: [str(p) for p in found if p.name == name] for name in names if name != 'speccmds.cmd'},
+              'workload_candidates': workloads, 'search_issues': issues}
+    save_json(out / 'discovery-diagnostics.json', report)
+    return roots, found, report
+
+
+def print_discovery(report, out):
+    log('Requested workloads: 602.gcc_s and 641.leela_s, base/' + report['requested_input_size'])
+    for name in ('runcpu', 'shrc'):
+        log('{}: {}'.format(name, ', '.join(report['tools'][name]) or 'not found'))
+    if not report['workload_candidates']:
+        log('No gcc/leela speccmds.cmd files found in the searched directories.')
+    for entry in report['workload_candidates']:
+        reason = entry.get('error') or ('matches requested input' if entry['requested_speed_and_size']
+                                       else 'different input size or SPEC suite')
+        log('{}: {}'.format(entry['path'], reason))
+    for issue in report['search_issues'][:10]:
+        log('Search issue: ' + issue)
+    log('Full search details: ' + str(out / 'discovery-diagnostics.json'))
 
 
 def parse_speccmds(path):
@@ -168,8 +235,7 @@ def parse_speccmds(path):
 
 def discover(settings, out):
     log('Discovering Pin, SPEC run directories, and Destiny...')
-    roots = discovery_roots(settings)
-    found = walk_find(roots, ('pin', 'destiny', 'sample_SRAM.cell', 'speccmds.cmd', 'runcpu'))
+    roots, found, diagnostics = discover_files(settings, out)
     def executable(key, envkey):
         value = settings.get(key) or os.environ.get(envkey) or shutil.which(key)
         if not value and key == 'pin':
@@ -228,10 +294,12 @@ def discover(settings, out):
                 if candidates:
                     benchmarks[name] = parse_speccmds(candidates[0])
             if name not in benchmarks:
+                print_discovery(diagnostics, out)
                 raise RuntimeError('No usable {} SPECspeed {} run directory. Run the course SPEC '
                                    'runsetup for 602.gcc_s and 641.leela_s, or set SPEC_CONFIG '
                                    'and load SPEC first. You can point benchmarks.{} in lab2_config.json '
-                                   'at speccmds.cmd. {}'.format(name, size, name, '; '.join(errors)))
+                                   'at speccmds.cmd. Discovery details are saved in {}. {}'.format(
+                                       name, size, name, out / 'discovery-diagnostics.json', '; '.join(errors)))
     destiny = executable('destiny', 'DESTINY')
     cells = [p for p in found if p.name == 'sample_SRAM.cell']
     cell = settings.get('destiny_cell') or os.environ.get('DESTINY_CELL')
@@ -836,6 +904,7 @@ def report_html(exp, best, chosen, frontier, plots):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check', action='store_true', help='Discover dependencies without running experiments')
+    parser.add_argument('--diagnose', action='store_true', help='List SPEC paths and search issues; no builds, downloads, or benchmark runs')
     parser.add_argument('--config', type=Path, default=ROOT / 'lab2_config.json')
     args = parser.parse_args()
     settings = json.loads(args.config.read_text()) if args.config.exists() else {}
@@ -856,6 +925,11 @@ def main():
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             raise RuntimeError('Another collector is already using ' + str(out))
+        if args.diagnose:
+            log('Inspecting SPEC setup (no workloads will be run)...')
+            _, _, diagnostics = discover_files(settings, out)
+            print_discovery(diagnostics, out)
+            return
         tools = discover(settings, out)
         save_json(out / 'discovered.json', tools)
         if args.check:

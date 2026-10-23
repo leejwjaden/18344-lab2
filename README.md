@@ -105,6 +105,23 @@ scan all of AFS. The newest usable **base/test SPECspeed** run directory is sele
 and its identity is recorded. Existing Pin-wrapped benchmark commands are rejected
 to avoid instrumenting the wrapper instead of the benchmark.
 
+Discovery follows installation symlinks with cycle protection and revisits
+overlapping search roots when doing so can reach deeper run directories.
+If it cannot find the requested workload, inspect the setup without building or
+running anything:
+
+```bash
+python3 script.py --diagnose
+```
+
+This lists gcc/leela command files (including other input sizes or the rate suite),
+parser errors, and search problems. Full paths and the relevant environment are
+saved to `lab2-output/discovery-diagnostics.json`, including when normal discovery
+fails. A missing match can mean the run directory is absent, inaccessible, outside
+the search, or prepared for a different input size. It does not mean that no
+previous experiment data exists. `spec_root` in `lab2_config.json` can identify a
+SPEC installation directly; `search_roots` can identify a separate SPEC output tree.
+
 If SPEC has not been prepared, load the course environment and set `SPEC_CONFIG`
 to your existing course configuration; the script then calls `runcpu --action=runsetup`
 for gcc and leela. It cannot obtain licensed SPEC software or guess a compiler

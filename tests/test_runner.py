@@ -40,6 +40,33 @@ def stats_text(two=True):
 
 
 class RunnerTests(unittest.TestCase):
+    def test_discovery_revisits_overlapping_roots_with_more_depth(self):
+        with tempfile.TemporaryDirectory(dir=str(Path(__file__).resolve().parent)) as tmp:
+            root = Path(tmp)
+            run = root / 'installation/benchspec/CPU/602.gcc_s/run/run_base_test_example.0000'
+            run.mkdir(parents=True)
+            command = run / 'speccmds.cmd'
+            command.write_text('fixture')
+            found = script.walk_find([root, root / 'installation/benchspec/CPU'],
+                                     ('speccmds.cmd',), max_depth=3)
+            self.assertEqual(found, [command])
+
+    def test_discovery_follows_installation_symlink_without_looping(self):
+        with tempfile.TemporaryDirectory(dir=str(Path(__file__).resolve().parent)) as tmp:
+            root = Path(tmp)
+            install = root / 'actual'
+            install.mkdir()
+            (root / 'search').mkdir()
+            (install / 'speccmds.cmd').write_text('fixture')
+            try:
+                (root / 'search/spec').symlink_to(install, target_is_directory=True)
+                (install / 'loop').symlink_to(root / 'search', target_is_directory=True)
+            except OSError:
+                self.skipTest('Creating directory symlinks is unavailable on this host')
+            found = script.walk_find([root / 'search'], ('speccmds.cmd',))
+            self.assertEqual(len(found), 1)
+            self.assertEqual(found[0].resolve(), install / 'speccmds.cmd')
+
     def test_destiny_cache_summary(self):
         h = script.parse_destiny(DESTINY)
         self.assertEqual(h['tag_area_mm2'], .025)
