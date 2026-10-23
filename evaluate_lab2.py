@@ -56,6 +56,8 @@ def miss_rate(stats, prefix):
 
 def amat(stats, l1_access_cost, l2_access_cost, dram_cost):
     l1_misses = miss_rate(stats, "")
+    if "l2_accesses" not in stats:
+        return l1_access_cost + l1_misses * dram_cost
     l2_misses = miss_rate(stats, "l2_")
     return l1_access_cost + l1_misses * (
         l2_access_cost + l2_misses * dram_cost

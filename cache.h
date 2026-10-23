@@ -16,7 +16,8 @@ struct CacheStats {
     uint64_t accesses;
     uint64_t hits;
     uint64_t misses;
-    CacheStats() : accesses(0), hits(0), misses(0) {}
+    uint64_t reads, writes, readHits, writeHits;
+    CacheStats() : accesses(0), hits(0), misses(0), reads(0), writes(0), readHits(0), writeHits(0) {}
 };
 
 enum class ReplacementPolicy { Random, Lru, Plru, RoundRobin };
@@ -27,7 +28,7 @@ public:
     Cache(std::size_t capacityBytes, std::size_t blockSizeBytes,
           std::size_t associativity, ReplacementPolicy policy);
 
-    bool accessBlock(uintptr_t address);
+    bool accessBlock(uintptr_t address, bool write = false);
     void access(uintptr_t address, std::size_t size);
     const CacheStats& stats() const { return stats_; }
     void printStats(std::ostream& out, const char* prefix = "") const;

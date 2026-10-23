@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+lab2-output/
+collection.log
+cache_test
+cache_test.exe
+lab2_config.json
