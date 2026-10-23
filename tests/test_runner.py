@@ -162,6 +162,30 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(commands[1]['stdin'], 'in')
             self.assertEqual(commands[1]['cwd'], str(root.resolve()))
 
+    def test_spec_environment_headers_are_metadata_not_commands(self):
+        with tempfile.TemporaryDirectory(dir=str(Path(__file__).resolve().parent)) as tmp:
+            root = Path(tmp)
+            (root / 'cpugcc_s_base.mytest-m64').write_text('fixture')
+            p = root / 'speccmds.cmd'
+            p.write_text(
+                '-E OMP_NUM_THREADS 8\n'
+                '-E EMPTY_VALUE\n'
+                '  -E MESSAGE literal # hash and an unmatched quote: \'\n'
+                '-E SHELL_TEXT $(touch should-never-execute)\n'
+                '-C 1\n'
+                '-c "{}"\n'
+                '-o gcc.out -e gcc.err ./cpugcc_s_base.mytest-m64 input.c -O3\n'.format(root))
+            with patch.dict(script.os.environ, {'OMP_NUM_THREADS': '1'}):
+                commands = script.parse_speccmds(p)
+                self.assertEqual(script.os.environ['OMP_NUM_THREADS'], '1')
+            self.assertEqual(len(commands), 1)
+            self.assertEqual(commands[0]['argv'][1:], ['input.c', '-O3'])
+            self.assertEqual(commands[0]['cwd'], str(root.resolve()))
+            self.assertFalse((root / 'should-never-execute').exists())
+            p.write_text('-E\n')
+            with self.assertRaisesRegex(RuntimeError, 'Malformed SPEC environment record'):
+                script.parse_speccmds(p)
+
     def test_budget_and_block_sizes(self):
         c = script.Cache
         self.assertTrue(script.valid_pair(c(64, 64, 4, 'lru'), c(4096, 128, 8, 'plru')))

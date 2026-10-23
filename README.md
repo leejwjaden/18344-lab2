@@ -106,6 +106,10 @@ there too. It does not search old course semesters or unrelated `/opt` and
 `/usr/local` trees. The newest usable **base/test SPECspeed** run directory is selected
 and its identity is recorded. Existing Pin-wrapped benchmark commands are rejected
 to avoid instrumenting the wrapper instead of the benchmark.
+The command parser accepts SPEC's `-E NAME VALUE` environment-record headers.
+These are metadata, not benchmark commands. As with normal `specinvoke`, the runner
+uses its active process environment rather than replaying that recorded snapshot;
+its existing single-thread and locale settings remain in effect.
 
 Discovery follows installation symlinks with cycle protection and revisits
 overlapping search roots when doing so can reach deeper run directories.

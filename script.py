@@ -268,11 +268,22 @@ def print_discovery(report, out):
 
 
 def parse_speccmds(path):
-    """Parse SPEC's command file, including per-command cwd and input redirects."""
+    """Parse commands, ignoring SPEC's informational -E environment snapshot.
+
+    Like a normal specinvoke run, execution inherits the active environment;
+    the snapshot is only replayed by specinvoke's optional -nn shell export.
+    """
     path = Path(path).resolve()
     current = path.parent
     commands = []
     for line in path.read_text().splitlines():
+        # -E NAME VALUE is a standalone environment-record directive, not a
+        # command prefix. Skip it BEFORE shell tokenization: values may contain
+        # literal quotes, # characters, or exported shell-function text.
+        if re.match(r'^\s*-E(?:\s|$)', line):
+            if len(line.split(None, 2)) < 2:
+                raise RuntimeError('Malformed SPEC environment record in ' + str(path))
+            continue
         tokens = shlex.split(line, comments=True)
         if not tokens:
             continue
