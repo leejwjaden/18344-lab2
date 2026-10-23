@@ -6,6 +6,7 @@ optional lab2_config.json overrides. Existing results are never overwritten.
 """
 import argparse
 import csv
+import getpass
 import hashlib
 import html
 import itertools
@@ -28,6 +29,7 @@ POLICIES = ('random', 'lru', 'plru', 'round-robin')
 BUDGET = 5 * 1024 * 1024
 DRAM_NS = 9.5
 VERSION = 1
+COURSE_ROOTS = (Path('/afs/ece.cmu.edu/class/ece344'), Path('/afs/ece/class/ece344'))
 
 
 def log(message):
@@ -125,35 +127,98 @@ def walk_find(roots, names, max_depth=7, limit=5000, issues=None):
 
 
 def discovery_roots(settings):
-    roots = [ROOT, ROOT.parent, Path.home() / 'Private' / '18344',
-             Path.home() / '18344', Path.home() / 'Private', Path.home()]
+    roots = [Path('/scratch') / ('ece344-' + getpass.getuser()),
+             ROOT, ROOT.parent, Path.home() / 'Private' / '18344', Path.home() / '18344']
     roots += [Path(x) for x in settings.get('search_roots', [])]
-    for key in ('SPEC', 'SPEC_ROOT', 'PIN_ROOT', 'DESTINY_ROOT'):
+    for key in ('ECE344_HOME', 'SPEC', 'SPEC_ROOT', 'PIN_ROOT', 'DESTINY_ROOT'):
         if os.environ.get(key):
             roots.insert(0, Path(os.environ[key]))
     if settings.get('spec_root'):
         roots.insert(0, Path(settings['spec_root']))
+    if settings.get('spec_output_root'):
+        roots.insert(0, Path(settings['spec_output_root']))
     for name in ('pin', 'runcpu', 'destiny'):
         exe = shutil.which(name)
         if exe:
             roots.extend([Path(exe).resolve().parent, Path(exe).resolve().parent.parent])
-    # The checked-in .so embeds this course Pin installation path. Include
-    # installation symlinks as explicit roots (os.walk does not follow them).
-    course_roots = [Path('/afs/ece.cmu.edu/class/ece344'), Path('/afs/ece/class/ece344')]
-    for course in course_roots:
-        opt = course / 'opt'
-        if opt.is_dir():
-            roots.extend(p / 'inst' for p in opt.iterdir() if (p / 'inst').is_dir())
-        roots.append(course)
-    roots.extend([Path('/opt'), Path('/usr/local')])
+    # Search current tool installations only, not archived semesters, private
+    # course directories, or unrelated system software trees.
+    for course in COURSE_ROOTS:
+        roots.extend(course / 'opt' / name for name in ('spec2017', 'pin/inst', 'destiny'))
     return list(dict.fromkeys(str(p) for p in roots))
+
+
+def spec_configuration(settings):
+    explicit = settings.get('spec_config') or os.environ.get('SPEC_CONFIG') or os.environ.get('ECE344_SPEC_CONFIG')
+    if explicit:
+        return os.path.expanduser(os.path.expandvars(explicit)), []
+    user = getpass.getuser()
+    folders = [ROOT, ROOT.parent, Path.home() / 'Private/18344', Path.home() / '18344', Path.home()]
+    if os.environ.get('ECE344_HOME'):
+        folders.insert(0, Path(os.environ['ECE344_HOME']))
+    folders += [p / 'opt/spec2017/config' for p in COURSE_ROOTS]
+    candidates = {}
+    for folder in folders:
+        if folder.is_dir():
+            for p in folder.glob('18344-*' + user + '.cfg'):
+                candidates[str(p.resolve())] = str(p)
+    choices = sorted(candidates.values())
+    # Do not guess between multiple personal configurations or use templates
+    # containing placeholder output/submit paths.
+    return (choices[0] if len(choices) == 1 else None), choices
+
+
+def config_output_roots(config):
+    """Read literal output_root paths without evaluating SPEC config code."""
+    if not config or not Path(config).is_file():
+        return []
+    roots = []
+    for line in Path(config).read_text(errors='replace').splitlines():
+        match = re.match(r'^\s*output_root\s*=\s*(.*?)\s*(?:#.*)?$', line)
+        if match:
+            value = match.group(1).strip().strip('\"\'')
+            value = re.sub(r'%\{ENV_([A-Za-z0-9_]+)\}',
+                           lambda m: os.environ.get(m.group(1), m.group(0)), value)
+            value = os.path.expanduser(os.path.expandvars(value))
+            if not any(c in value for c in '$%{}<>') and Path(value).is_absolute():
+                roots.append(value)
+    return roots
+
+
+def valid_runcpu(path):
+    path = Path(path)
+    return path.name == 'runcpu' and path.parent.name == 'bin' and (path.parent.parent / 'shrc').is_file()
+
+
+def setup_spec(runcpu, config, size, benchmark, settings, out):
+    """Prepare direct commands in the current user's scratch output tree."""
+    output = Path(settings.get('spec_output_root') or
+                  str(Path('/scratch') / ('ece344-' + getpass.getuser()))).expanduser().resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    args = [str(runcpu), '--config=' + config, '--action=runsetup', '--noreportable',
+            '--size=' + size, '--tune=base', '--iterations=1', '--threads=1',
+            '--no-use-submit-for-speed', '--output_root=' + str(output), benchmark]
+    spec_root = Path(runcpu).parent.parent
+    if not (spec_root / 'shrc').is_file():
+        raise RuntimeError('Cannot locate shrc beside the selected runcpu: ' + str(runcpu))
+    # Paths are positional arguments, not interpolated shell code. The child
+    # sources SPEC's own environment without changing the user's shell files.
+    command = ['bash', '-c', 'cd "$1" && . ./shrc && shift && exec "$@"',
+               'lab2-runsetup', str(spec_root)] + args
+    log('Preparing {} with {} (output: {})'.format(benchmark, config, output))
+    save_json(out / ('setup-' + benchmark + '.json'), {'argv': command, 'config': config, 'output_root': str(output)})
+    run(command, ROOT, out / ('setup-' + benchmark + '.log'))
+    return output
 
 
 def discover_files(settings, out):
     roots = discovery_roots(settings)
+    config, configs = spec_configuration(settings)
+    roots = config_output_roots(config) + roots
     issues = []
     names = ('pin', 'destiny', 'sample_SRAM.cell', 'speccmds.cmd', 'runcpu', 'shrc')
     found = walk_find(roots, names, issues=issues)
+    found = [p for p in found if p.name != 'runcpu' or valid_runcpu(p)]
     # Search installations directly as well as from their ancestor directories.
     installations = [p.parent.parent for p in found if p.name == 'runcpu']
     installations += [p.parent for p in found if p.name == 'shrc']
@@ -175,7 +240,9 @@ def discover_files(settings, out):
             entry['error'] = str(error)
         workloads.append(entry)
     report = {'searched_roots': roots, 'requested_input_size': size,
-              'environment': {k: os.environ.get(k, '') for k in ('SPEC', 'SPEC_ROOT', 'SPEC_CONFIG', 'PIN_ROOT')},
+              'selected_spec_config': config, 'personal_config_candidates': configs,
+              'environment': {k: os.environ.get(k, '') for k in ('SPEC', 'SPEC_ROOT', 'SPEC_CONFIG',
+                                                               'ECE344_SPEC_CONFIG', 'ECE344_HOME', 'PIN_ROOT')},
               'tools': {name: [str(p) for p in found if p.name == name] for name in names if name != 'speccmds.cmd'},
               'workload_candidates': workloads, 'search_issues': issues}
     save_json(out / 'discovery-diagnostics.json', report)
@@ -186,6 +253,9 @@ def print_discovery(report, out):
     log('Requested workloads: 602.gcc_s and 641.leela_s, base/' + report['requested_input_size'])
     for name in ('runcpu', 'shrc'):
         log('{}: {}'.format(name, ', '.join(report['tools'][name]) or 'not found'))
+    log('SPEC config: ' + (report['selected_spec_config'] or 'not selected'))
+    if not report['selected_spec_config'] and report['personal_config_candidates']:
+        log('Set ECE344_SPEC_CONFIG to one of: ' + ', '.join(report['personal_config_candidates']))
     if not report['workload_candidates']:
         log('No gcc/leela speccmds.cmd files found in the searched directories.')
     for entry in report['workload_candidates']:
@@ -238,6 +308,9 @@ def discover(settings, out):
     roots, found, diagnostics = discover_files(settings, out)
     def executable(key, envkey):
         value = settings.get(key) or os.environ.get(envkey) or shutil.which(key)
+        if not value and key == 'runcpu':
+            value = next((str(p / 'opt/spec2017/bin/runcpu') for p in COURSE_ROOTS
+                          if valid_runcpu(p / 'opt/spec2017/bin/runcpu') and (p / 'opt/spec2017/bin/runcpu').is_file()), None)
         if not value and key == 'pin':
             course_pin = Path('/afs/ece.cmu.edu/class/ece344/opt/pin/inst/pin')
             if course_pin.is_file():
@@ -282,12 +355,11 @@ def discover(settings, out):
                 errors.append(str(error))
         if name not in benchmarks:
             runcpu = executable('runcpu', 'RUNCPU')
-            config = settings.get('spec_config') or os.environ.get('SPEC_CONFIG')
+            config = diagnostics['selected_spec_config']
             if runcpu and config:
-                run([runcpu, '--config=' + config, '--action=runsetup', '--size=' + size,
-                     '--tune=base', '--iterations=1', '--threads=1', number + '.' + name + '_s'],
-                    ROOT, out / ('setup-' + name + '.log'))
-                more = walk_find(roots, ('speccmds.cmd',))
+                output = setup_spec(runcpu, config, size, number + '.' + name + '_s', settings, out)
+                more = walk_find([output / 'benchspec/CPU'], ('speccmds.cmd',))
+                found += more
                 candidates = sorted([p for p in more if number + '.' + name + '_s' in str(p)
                                      and 'run_base_' + size in str(p)],
                                     key=lambda p: p.stat().st_mtime, reverse=True)
@@ -296,8 +368,9 @@ def discover(settings, out):
             if name not in benchmarks:
                 print_discovery(diagnostics, out)
                 raise RuntimeError('No usable {} SPECspeed {} run directory. Run the course SPEC '
-                                   'runsetup for 602.gcc_s and 641.leela_s, or set SPEC_CONFIG '
-                                   'and load SPEC first. You can point benchmarks.{} in lab2_config.json '
+                                   'runsetup for 602.gcc_s and 641.leela_s, or set ECE344_SPEC_CONFIG '
+                                   '(also accepts SPEC_CONFIG) to your personal course .cfg file. '
+                                   'You can point benchmarks.{} in lab2_config.json '
                                    'at speccmds.cmd. Discovery details are saved in {}. {}'.format(
                                        name, size, name, out / 'discovery-diagnostics.json', '; '.join(errors)))
     destiny = executable('destiny', 'DESTINY')

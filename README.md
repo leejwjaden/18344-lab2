@@ -99,9 +99,11 @@ The repository's original files do not specify absolute ECE SPEC/Destiny paths.
 The checked-in binary does identify the course Pin installation at
 `/afs/ece.cmu.edu/class/ece344/opt/pin/inst`, which is a built-in discovery candidate.
 Discovery uses PATH; `PIN`, `PIN_ROOT`, `SPEC`, `SPEC_ROOT`, `DESTINY`,
-`DESTINY_ROOT`, and `DESTINY_CELL`; nearby directories; your home/course
-directories; and bounded searches under common course locations. It does not
-scan all of AFS. The newest usable **base/test SPECspeed** run directory is selected
+`DESTINY_ROOT`, and `DESTINY_CELL`; `ECE344_HOME`; the course's
+`/scratch/ece344-<current-user>` directory; and current course tool installations.
+It reads `output_root` from your selected personal SPEC configuration and searches
+there too. It does not search old course semesters or unrelated `/opt` and
+`/usr/local` trees. The newest usable **base/test SPECspeed** run directory is selected
 and its identity is recorded. Existing Pin-wrapped benchmark commands are rejected
 to avoid instrumenting the wrapper instead of the benchmark.
 
@@ -122,10 +124,20 @@ the search, or prepared for a different input size. It does not mean that no
 previous experiment data exists. `spec_root` in `lab2_config.json` can identify a
 SPEC installation directly; `search_roots` can identify a separate SPEC output tree.
 
-If SPEC has not been prepared, load the course environment and set `SPEC_CONFIG`
-to your existing course configuration; the script then calls `runcpu --action=runsetup`
-for gcc and leela. It cannot obtain licensed SPEC software or guess a compiler
-configuration. If the environment is unavailable it stops with an actionable error;
+SPEC configuration selection checks `spec_config` in the JSON override, then
+`SPEC_CONFIG`, then the course's **`ECE344_SPEC_CONFIG`** environment variable.
+Otherwise it looks for a unique personal `18344-*-<current-user>.cfg` in the course
+home, nearby directories, or the installed SPEC config directory. Multiple matches
+are listed rather than guessed.
+
+If SPEC has not been prepared, the script automatically calls `runcpu --action=runsetup`
+with that configuration for gcc and leela. This sources the installation's `shrc`
+in a child shell and disables the course's submit wrapper for SPECspeed. Setup
+output goes to `/scratch/ece344-<current-user>` (override with `spec_output_root`),
+and the runner searches that exact output location afterward. Neither the shared
+course config nor your shell files are edited. Setup may build missing executables.
+It cannot obtain licensed SPEC software or guess a compiler configuration.
+If the environment is unavailable it stops with an actionable error;
 it never substitutes synthetic benchmark data or invented Destiny costs.
 
 Optional overrides go in `lab2_config.json`; they are read automatically on the
@@ -200,3 +212,4 @@ The collector runs the C++ tests on the ECE machine before experiments.
 Tool format references:
 - [Destiny author mirror](https://github.com/sparsh0mittal/destiny_3d_cache)
 - [SPEC2017 utilities](https://www.spec.org/cpu2017/Docs/utility.html)
+- [Course setup: ECE344_SPEC_CONFIG and scratch output](https://course.ece.cmu.edu/~ece344/course_documents/18344-f25-recitation0.pdf)

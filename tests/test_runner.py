@@ -40,6 +40,60 @@ def stats_text(two=True):
 
 
 class RunnerTests(unittest.TestCase):
+    def test_course_config_environment_and_output_root(self):
+        with tempfile.TemporaryDirectory(dir=str(Path(__file__).resolve().parent)) as tmp:
+            root = Path(tmp)
+            config = root / 'personal.cfg'
+            output = root / 'scratch'
+            config.write_text('output_root = ' + output.as_posix() + ' # course scratch\n')
+            with patch.dict(script.os.environ, {'ECE344_SPEC_CONFIG': str(config)}, clear=True):
+                selected, _ = script.spec_configuration({})
+                self.assertEqual(selected, str(config))
+                self.assertEqual(script.config_output_roots(selected), [output.as_posix()])
+                with patch.dict(script.os.environ, {'SPEC_CONFIG': 'explicit.cfg'}):
+                    self.assertEqual(script.spec_configuration({})[0], 'explicit.cfg')
+
+    def test_course_discovery_finds_config_output_and_ignores_fake_runcpu(self):
+        with tempfile.TemporaryDirectory(dir=str(Path(__file__).resolve().parent)) as tmp:
+            root = Path(tmp)
+            install = root / 'course/opt/spec2017'
+            (install / 'bin/harness').mkdir(parents=True)
+            (install / 'bin/runcpu').write_text('fixture')
+            (install / 'bin/harness/runcpu').write_text('fixture')
+            (install / 'shrc').write_text('fixture')
+            output = root / 'scratch'
+            work = output / 'benchspec/CPU/602.gcc_s/run/run_base_test_example.0000'
+            work.mkdir(parents=True)
+            (work / 'cpugcc_s').write_text('fixture')
+            (work / 'speccmds.cmd').write_text('./cpugcc_s input.c\n')
+            config = root / 'course.cfg'
+            config.write_text('output_root = ' + output.as_posix() + '\n')
+            with patch.object(script, 'discovery_roots', return_value=[str(install)]), \
+                    patch.dict(script.os.environ, {'ECE344_SPEC_CONFIG': str(config)}, clear=True):
+                _, _, report = script.discover_files({}, root)
+            self.assertEqual(report['tools']['runcpu'], [str(install / 'bin/runcpu')])
+            self.assertEqual(len(report['workload_candidates']), 1)
+            self.assertTrue(report['workload_candidates'][0]['requested_speed_and_size'])
+
+    def test_runsetup_sources_spec_and_overrides_submit_and_output(self):
+        with tempfile.TemporaryDirectory(dir=str(Path(__file__).resolve().parent)) as tmp:
+            root = Path(tmp)
+            install = root / 'SPEC with spaces'
+            install.mkdir()
+            (install / 'shrc').write_text('fixture')
+            output = root / 'personal output'
+            with patch.object(script, 'run') as run, patch.object(script, 'log'):
+                result = script.setup_spec(install / 'bin/runcpu', 'personal.cfg', 'test',
+                                           '602.gcc_s', {'spec_output_root': str(output)}, root)
+            command = run.call_args[0][0]
+            self.assertEqual(result, output.resolve())
+            self.assertEqual(command[:2], ['bash', '-c'])
+            self.assertIn('--no-use-submit-for-speed', command)
+            self.assertIn('--output_root=' + str(output.resolve()), command)
+            self.assertIn('--action=runsetup', command)
+            self.assertIn('--noreportable', command)
+            self.assertIn(str(install), command)
+
     def test_discovery_revisits_overlapping_roots_with_more_depth(self):
         with tempfile.TemporaryDirectory(dir=str(Path(__file__).resolve().parent)) as tmp:
             root = Path(tmp)
