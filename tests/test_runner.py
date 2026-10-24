@@ -186,6 +186,31 @@ class RunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'Malformed SPEC environment record'):
                 script.parse_speccmds(p)
 
+    def test_direct_commands_bypass_spec_parser_and_setup(self):
+        with tempfile.TemporaryDirectory(dir=str(Path(__file__).resolve().parent)) as tmp:
+            root = Path(tmp)
+            sdk = root / 'source/tools/Config'
+            sdk.mkdir(parents=True)
+            (sdk / 'makefile.config').write_text('fixture')
+            for name in ('pin', 'destiny', 'sample_SRAM.cell', 'gcc', 'input one.c'):
+                (root / name).write_text('fixture')
+            entries = [{'cwd': str(root), 'argv': ['./gcc', 'input one.c', '-O3'],
+                        'stdin': 'input one.c'}]
+            settings = {'pin': str(root / 'pin'), 'pin_root': str(root),
+                        'destiny': str(root / 'destiny'), 'destiny_cell': str(root / 'sample_SRAM.cell'),
+                        'benchmark_commands': {'gcc': entries, 'leela': entries}}
+            with patch.object(script, 'discover_files', return_value=([], [], {})), \
+                    patch.object(script, 'parse_speccmds', side_effect=AssertionError('must bypass parser')), \
+                    patch.object(script, 'setup_spec', side_effect=AssertionError('must bypass setup')):
+                tools = script.discover(settings, root)
+            self.assertEqual(tools['benchmarks']['gcc'][0]['argv'],
+                             [str((root / 'gcc').resolve()), 'input one.c', '-O3'])
+            self.assertEqual(tools['benchmarks']['leela'][0]['stdin'], 'input one.c')
+            with self.assertRaisesRegex(ValueError, 'executable does not exist'):
+                script.direct_commands([{'cwd': str(root), 'argv': ['./missing']}])
+            with self.assertRaisesRegex(ValueError, 'nonempty JSON array'):
+                script.direct_commands([{'cwd': str(root), 'argv': './gcc input.c'}])
+
     def test_budget_and_block_sizes(self):
         c = script.Cache
         self.assertTrue(script.valid_pair(c(64, 64, 4, 'lru'), c(4096, 128, 8, 'plru')))
@@ -257,6 +282,20 @@ class RunnerTests(unittest.TestCase):
                 exp.search()
                 self.assertEqual(len(calls), count, 'Completed jobs should not rerun')
                 self.assertEqual(json.loads((exp.session / 'part4/recommended.json').read_text()), original_scores)
+                # The direct-command entry point must also finish without Task 1/2 rows.
+                exp.settings = {'task4_only': True}
+                exp.rows, exp.scores = [], {}
+                exp.session = root / 'task4-only'
+                exp.session.mkdir()
+                calls.clear()
+                exp.search()
+                self.assertTrue(calls)
+                self.assertTrue(all('-l2c' in argv for argv in calls))
+                self.assertFalse((exp.session / 'part1').exists())
+                self.assertFalse((exp.session / 'part2').exists())
+                self.assertTrue((exp.session / 'part4/plots/pareto-benchmarks.svg').exists())
+                self.assertTrue((exp.session / 'COMPLETE.json').exists())
+                self.assertIn('Task 4 only', (exp.session / 'report.html').read_text(encoding='utf-8'))
 
 
 if __name__ == '__main__':

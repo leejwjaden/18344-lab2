@@ -1,5 +1,42 @@
 # Lab 2: automatic data collection
 
+## Task 4 with explicit benchmark commands
+
+`task4.py` uses the same direct `pin ... -- executable arguments` launch approach
+as `evaluate_lab2.py`. It bypasses `speccmds.cmd` parsing and SPEC runsetup entirely,
+and collects only the two-level Task 4 search. It still builds/tests the corrected
+simulator and uses Destiny for latency, area, energy, and estimated power.
+
+One-time setup on ECE:
+
+```bash
+cp task4_config.example.json task4_config.json
+# Edit task4_config.json with your actual gcc and leela commands and directories.
+python3 task4.py --check
+python3 task4.py
+```
+
+For each benchmark, `cwd` is the directory containing its input files. `argv` is
+the executable and arguments previously passed after `--` to `evaluate_lab2.py`,
+with each argument a separate JSON string. Relative executable paths are resolved
+against `cwd`. Add another command object for each additional required input.
+Use the actual 602.gcc_s and 641.leela_s workloads, not a system compiler or toy
+program. The old invocation was not saved, so the example intentionally contains
+placeholders. Commands are passed directly without a shell: omit `>`, `2>`, pipes,
+and shell expansions. Program output is captured in each run's `program.log`;
+for input redirection, add `"stdin": "input-file"` to the command object.
+
+Pin/Destiny discovery and settings are shared with `script.py`; optional `pin`,
+`pin_root`, `destiny`, and `destiny_cell` paths can be added to this config. Each
+run receives a private copy of `cwd`, so select the benchmark input directory,
+not your home or repository directory. Include every required workload command;
+the runner cannot infer omitted inputs from an explicit command list.
+
+Results go to `lab2-output/session-.../part4/`, including CSVs, `recommended.json`,
+and `plots/*.svg`. Shared raw runs and `report.html` are in the session directory.
+`lab2-output/LATEST.txt` identifies the session. Rerun `python3 task4.py` to resume.
+The search is bounded, not exhaustive; its report is a draft for the final writeup.
+
 Copy **this whole project**, including `tests/` and the updated C++ files, to the
 Linux ECE machine. In the same course environment you used for previous Pin/SPEC
 runs, run:

@@ -314,6 +314,35 @@ def parse_speccmds(path):
     return commands
 
 
+def direct_commands(entries):
+    """Resolve explicit argv arrays without interpreting SPEC or shell syntax."""
+    if not isinstance(entries, list) or not entries:
+        raise ValueError('Each benchmark_commands entry must be a nonempty list of commands')
+    commands = []
+    for entry in entries:
+        if not isinstance(entry, dict) or not isinstance(entry.get('cwd'), str):
+            raise ValueError('Each command must contain a cwd directory and argv array')
+        argv = entry.get('argv')
+        if not isinstance(argv, list) or not argv or any(not isinstance(a, str) for a in argv) or not argv[0]:
+            raise ValueError('argv must be a nonempty JSON array of strings')
+        cwd = Path(entry['cwd']).expanduser().resolve()
+        if not cwd.is_dir():
+            raise ValueError('Benchmark working directory does not exist: ' + str(cwd))
+        exe = Path(argv[0]).expanduser()
+        if not exe.is_absolute():
+            exe = cwd / exe
+        if not exe.is_file():
+            raise ValueError('Benchmark executable does not exist: ' + str(exe))
+        stdin = entry.get('stdin')
+        if stdin is not None and not isinstance(stdin, str):
+            raise ValueError('stdin must be a file path string')
+        if stdin is not None and not (cwd / stdin).is_file():
+            raise ValueError('Benchmark stdin file does not exist: ' + str(stdin))
+        commands.append({'argv': [str(exe.resolve())] + argv[1:], 'cwd': str(cwd),
+                         'stdin': stdin, 'source': 'explicit benchmark_commands'})
+    return commands
+
+
 def discover(settings, out):
     log('Discovering Pin, SPEC run directories, and Destiny...')
     roots, found, diagnostics = discover_files(settings, out)
@@ -346,6 +375,9 @@ def discover(settings, out):
         raise ValueError('input_size must be test, train, or ref')
     benchmarks = {}
     for name, number in (('gcc', '602'), ('leela', '641')):
+        if name in settings.get('benchmark_commands', {}):
+            benchmarks[name] = direct_commands(settings['benchmark_commands'][name])
+            continue
         explicit = settings.get('benchmarks', {}).get(name)
         if explicit:
             if 'run_base_' + size not in str(explicit) or number + '.' + name + '_s' not in str(explicit):
@@ -705,6 +737,8 @@ class Experiment:
     def export_parts(self):
         """Publish per-part tables as runs finish, including reused configurations."""
         for part in ('part1', 'part2', 'part4'):
+            if self.settings.get('task4_only') and part != 'part4':
+                continue
             folder = self.session / part
             folder.mkdir(parents=True, exist_ok=True)
             rows = [r for r in self.rows if
@@ -732,6 +766,11 @@ class Experiment:
             write_csv(folder / 'hardware.csv', hardware)
 
     def search(self):
+        if not self.settings.get('task4_only'):
+            self.search_single_level()
+        self.search_two_level()
+
+    def search_single_level(self):
         log('Task 1: capacity, block-size, and associativity sweep.')
         for kb, block, ways in itertools.product((2, 4, 8), (32, 64), (1, 2, 4)):
             self.evaluate(Cache(kb, block, ways, 'lru'), None, 'task1')
@@ -739,6 +778,8 @@ class Experiment:
         for kb, ways in ((2, 1), (4, 2), (8, 4)):
             for policy in POLICIES:
                 self.evaluate(Cache(kb, 64, ways, policy), None, 'task2')
+
+    def search_two_level(self):
         log('Tasks 3/4: staged two-level design search.')
         l1s = [Cache(k, b, a, 'lru') for k, b, a in itertools.product(
             self.settings.get('l1_sizes_kb', [8, 32, 64]), (32, 64), (1, 4, 8))]
@@ -797,6 +838,8 @@ class Experiment:
             svg_chart(self.session / filename, title, xlabel, ylabel, series, bars, lines)
             plots.append((title, filename))
         for name in sorted(self.tools['benchmarks']):
+            if self.settings.get('task4_only'):
+                break
             rows = [r for r in self.rows if r['benchmark'] == name]
             series = {}
             for r in rows:
@@ -901,8 +944,9 @@ def report_html(exp, best, chosen, frontier, plots):
              'img{width:100%}code{background:#eee} @media print{h2{break-after:avoid}img{break-inside:avoid}}</style>',
              '<h1>Lab 2: collected results and analysis</h1>',
              '<p>Input size: <b>{}</b>. {} evaluated configurations; {} benchmark summaries; '
-             '{} points on the three-objective Pareto frontier. All inputs in each selected SPEC command file '
-             'were run. These are architectural experiments, not official SPEC scores.</p>'.format(
+             '{} points on the three-objective Pareto frontier. All configured input commands '
+             'were run. Explicit commands must cover the required workloads; the runner does not verify '
+             'their completeness. These are architectural experiments, not official SPEC scores.</p>'.format(
                  esc(exp.tools['input_size']), len(exp.scores), len(exp.rows), len(frontier)),
              '<h2>Selected hierarchy</h2><p>L1: <b>{}</b>; L2: <b>{}</b>. '
              'Equal-weight mean gcc/leela AMAT: {:.5g} ns. Area: {:.5g} mm². '
@@ -910,9 +954,10 @@ def report_html(exp, best, chosen, frontier, plots):
              'staged search; this does not establish a global optimum.</p>'.format(
                  esc(best['l1']), esc(best['l2']), best['amat_ns'], best['area_mm2'], best['total_power_estimate_mw']),
              '<h2>Method and model assumptions</h2><ul>',
+             ('<li>Task 4 only: single-level Tasks 1 and 2 were not collected.</li>' if exp.settings.get('task4_only') else
              '<li>18 single-level configurations; four replacement policies on three configurations. '
              '2 KB direct mapped, 4 KB 2-way, and 8 KB 4-way expose capacity/conflict pressure and '
-             'increase replacement freedom. Direct mapping is a policy-independent control.</li>',
+             'increase replacement freedom. Direct mapping is a policy-independent control.</li>'),
              '<li>Search L1 geometry with a fixed 512 KB L2; search L2 with the best L1; cross all '
              'four policies independently at both levels for the four best geometry pairs. '
              'Finally vary L2 size and associativity one at a time around a recorded anchor.</li>',
@@ -951,11 +996,14 @@ def report_html(exp, best, chosen, frontier, plots):
                          overhead(cache)/(cache.kb*1024),
                          'L1 exceeds a three-cycle illustrative target; discuss this tradeoff.'
                          if level == 'L1' and h['hit_ns']*2 > 3 else ''))
-    parts.append('<h2>Replacement observations</h2>')
+    if not exp.settings.get('task4_only'):
+        parts.append('<h2>Replacement observations</h2>')
     for name in sorted(exp.tools['benchmarks']):
         for kb, ways in ((2, 1), (4, 2), (8, 4)):
             rows = [r for r in exp.rows if r['benchmark'] == name and 'task2' in r['stages'].split(';')
                     and r['l1_kb'] == kb and r['l1_ways'] == ways]
+            if not rows:
+                continue
             winner = min(rows, key=lambda r: r['l1_miss_rate'])
             spread = max(r['l1_miss_rate'] for r in rows) - min(r['l1_miss_rate'] for r in rows)
             parts.append('<p>{}, {} KB / {} way: lowest observed miss rate {:.3%} ({}); '
@@ -971,7 +1019,7 @@ def report_html(exp, best, chosen, frontier, plots):
     for title, filename in plots:
         parts.append('<h2>{}</h2><img src="{}" alt="{}">'.format(esc(title), filename, esc(title)))
     parts.append('<h2>Files and final writeup</h2><p>measurements.csv contains per-benchmark counters; '
-                 'part1/ and part2/ contain their own measurements, hardware tables, run indexes, and plots. '
+                 'When Tasks 1 and 2 are enabled, part1/ and part2/ contain their measurements, hardware tables, run indexes, and plots. '
                  'part4/ contains the two-level measurements, design_space.csv, pareto.csv, '
                  'recommended.json, and sensitivity/Pareto plots. All figures are in the respective '
                  'part\'s plots/ subfolder. Each part\'s runs.csv points to shared '
@@ -985,13 +1033,22 @@ def report_html(exp, best, chosen, frontier, plots):
     (exp.session / 'report.html').write_text('\n'.join(parts), encoding='utf-8')
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+def main(argv=None, task4_only=False):
+    parser = argparse.ArgumentParser(description=(
+        'Collect Task 4 on Linux using explicit benchmark commands in task4_config.json.'
+        if task4_only else __doc__))
     parser.add_argument('--check', action='store_true', help='Discover dependencies without running experiments')
     parser.add_argument('--diagnose', action='store_true', help='List SPEC paths and search issues; no builds, downloads, or benchmark runs')
-    parser.add_argument('--config', type=Path, default=ROOT / 'lab2_config.json')
-    args = parser.parse_args()
+    parser.add_argument('--config', type=Path, default=ROOT / ('task4_config.json' if task4_only else 'lab2_config.json'))
+    args = parser.parse_args(argv)
     settings = json.loads(args.config.read_text()) if args.config.exists() else {}
+    if task4_only:
+        if set(settings.get('benchmark_commands', {})) != {'gcc', 'leela'}:
+            raise ValueError('Create task4_config.json from task4_config.example.json and enter the gcc and leela '
+                             'commands and input directories used with evaluate_lab2.py. Both are required.')
+        for entries in settings['benchmark_commands'].values():
+            direct_commands(entries)
+        settings['task4_only'] = True
     for key in ('l1_sizes_kb', 'l2_sizes_kb'):
         if key in settings and (not settings[key] or any(
                 not isinstance(v, int) or v <= 0 or v & (v-1) for v in settings[key])):
