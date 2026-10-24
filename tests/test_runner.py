@@ -228,6 +228,9 @@ class RunnerTests(unittest.TestCase):
             exp.session = Path(tmp) / 'new'
             exp.manifest = dict(old, settings={'task4_only': True, 'search_profile': 'compact20', 'reuse_session': str(source)})
             exp.settings = exp.manifest['settings']
+            old['workloads'] = {'files': [['input', 'hash']]}
+            script.save_json(source / 'manifest.json', old)
+            exp.manifest['workloads'] = {'files': [('input', 'hash')]}
             with patch.object(script, 'log'):
                 exp.reuse_completed(source)
             self.assertTrue((exp.session / 'runs/gcc/example/complete.json').exists())

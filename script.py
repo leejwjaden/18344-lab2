@@ -615,7 +615,7 @@ class Experiment:
         """Import verified measurements after a search-only change."""
         old = json.loads((source / 'manifest.json').read_text())
         for key in ('tools', 'tool_sha256', 'workloads', 'environment', 'aslr_disabled', 'machine'):
-            if old[key] != self.manifest[key]:
+            if digest(old[key]) != digest(self.manifest[key]):
                 raise ValueError('Cannot reuse session: changed ' + key)
         for name in ('cache.h', 'cache.cpp', 'memory-hierarchy.cpp'):
             if old['source_sha256'][name] != self.manifest['source_sha256'][name]:
