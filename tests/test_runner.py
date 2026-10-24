@@ -211,6 +211,31 @@ class RunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'nonempty JSON array'):
                 script.direct_commands([{'cwd': str(root), 'argv': './gcc input.c'}])
 
+    def test_reuse_validates_provenance_and_skips_incomplete_runs(self):
+        with tempfile.TemporaryDirectory(dir=str(Path(__file__).resolve().parent)) as tmp:
+            source = Path(tmp) / 'old'
+            run = source / 'runs/gcc/example'
+            run.mkdir(parents=True)
+            (source / 'destiny').mkdir()
+            (run / 'cache.stats').write_text(stats_text(True))
+            script.save_json(run / 'complete.json', {'stats': script.parse_stats(run / 'cache.stats', True)})
+            (source / 'runs/gcc/unfinished').mkdir()
+            old = dict(tools={}, tool_sha256={}, workloads={}, environment={},
+                       aslr_disabled=True, machine='fixture', settings={'task4_only': True},
+                       source_sha256={name: 'same' for name in ('cache.h', 'cache.cpp', 'memory-hierarchy.cpp')})
+            script.save_json(source / 'manifest.json', old)
+            exp = object.__new__(script.Experiment)
+            exp.session = Path(tmp) / 'new'
+            exp.manifest = dict(old, settings={'task4_only': True, 'search_profile': 'compact20', 'reuse_session': str(source)})
+            exp.settings = exp.manifest['settings']
+            with patch.object(script, 'log'):
+                exp.reuse_completed(source)
+            self.assertTrue((exp.session / 'runs/gcc/example/complete.json').exists())
+            self.assertFalse((exp.session / 'runs/gcc/unfinished').exists())
+            exp.manifest = dict(exp.manifest, tool_sha256={'pin': 'changed'})
+            with self.assertRaisesRegex(ValueError, 'changed tool_sha256'):
+                exp.reuse_completed(source)
+
     def test_budget_and_block_sizes(self):
         c = script.Cache
         self.assertTrue(script.valid_pair(c(64, 64, 4, 'lru'), c(4096, 128, 8, 'plru')))
@@ -283,13 +308,16 @@ class RunnerTests(unittest.TestCase):
                 self.assertEqual(len(calls), count, 'Completed jobs should not rerun')
                 self.assertEqual(json.loads((exp.session / 'part4/recommended.json').read_text()), original_scores)
                 # The direct-command entry point must also finish without Task 1/2 rows.
-                exp.settings = {'task4_only': True}
+                exp.settings = {'task4_only': True, 'search_profile': 'compact20'}
                 exp.rows, exp.scores = [], {}
                 exp.session = root / 'task4-only'
                 exp.session.mkdir()
                 calls.clear()
                 exp.search()
                 self.assertTrue(calls)
+                self.assertEqual(len(exp.scores), 20)
+                self.assertEqual(len(calls), 40)
+                self.assertEqual(len(exp.rows), 40)
                 self.assertTrue(all('-l2c' in argv for argv in calls))
                 self.assertFalse((exp.session / 'part1').exists())
                 self.assertFalse((exp.session / 'part2').exists())

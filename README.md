@@ -7,6 +7,19 @@ as `evaluate_lab2.py`. It bypasses `speccmds.cmd` parsing and SPEC runsetup enti
 and collects only the two-level Task 4 search. It still builds/tests the corrected
 simulator and uses Destiny for latency, area, energy, and estimated power.
 
+Task 4 now defaults to exactly **20 distinct configurations** (40 benchmark runs:
+gcc and leela for each). The budget includes eight initial L1 designs, three
+additional matched policy pairs, one L2 block-size comparison, and eight additional
+L2 size/associativity sensitivity points. Sensitivity curves each include the reused
+baseline. This is a limited search, not an exhaustive optimization. The HTML report
+describes its scope. The larger search remains available with `"search_profile":
+"full"`; `script.py` retains its original default.
+
+An optional `reuse_session` path imports completed runs and Destiny metrics after
+a search-only change. The runner verifies simulator sources, tool hashes, workload
+hashes, environment, and measurement settings before importing. Old sessions stay
+intact; incomplete benchmark runs restart.
+
 One-time setup on ECE:
 
 ```bash

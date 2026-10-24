@@ -606,8 +606,41 @@ class Experiment:
         self.session.mkdir(parents=True, exist_ok=True)
         self.manifest['pintool_sha256'] = binary_sha
         save_json(self.session / 'manifest.json', self.manifest)
+        if self.settings.get('reuse_session'):
+            self.reuse_completed(Path(self.settings['reuse_session']))
         (self.out / 'LATEST.txt').write_text(str(self.session) + '\n')
         log('Results: ' + str(self.session))
+
+    def reuse_completed(self, source):
+        """Import verified measurements after a search-only change."""
+        old = json.loads((source / 'manifest.json').read_text())
+        for key in ('tools', 'tool_sha256', 'workloads', 'environment', 'aslr_disabled', 'machine'):
+            if old[key] != self.manifest[key]:
+                raise ValueError('Cannot reuse session: changed ' + key)
+        for name in ('cache.h', 'cache.cpp', 'memory-hierarchy.cpp'):
+            if old['source_sha256'][name] != self.manifest['source_sha256'][name]:
+                raise ValueError('Cannot reuse session: changed ' + name)
+        ignored = {'reuse_session', 'search_profile'}
+        if {k: v for k, v in old['settings'].items() if k not in ignored} != {
+                k: v for k, v in self.settings.items() if k not in ignored}:
+            raise ValueError('Cannot reuse session: measurement settings changed')
+        count = 0
+        for marker in (source / 'runs').glob('*/*/complete.json'):
+            stats = parse_stats(marker.parent / 'cache.stats', True)
+            if json.loads(marker.read_text())['stats'] != stats:
+                raise ValueError('Cannot reuse inconsistent statistics: ' + str(marker))
+            target = self.session / marker.parent.relative_to(source)
+            target.mkdir(parents=True, exist_ok=True)
+            for item in marker.parent.iterdir():
+                if item.is_file() and not (target / item.name).exists():
+                    shutil.copy2(str(item), str(target / item.name))
+            count += 1
+        for folder in (source / 'destiny').iterdir():
+            target = self.session / 'destiny' / folder.name
+            if (folder / 'metrics.json').exists() and not target.exists():
+                shutil.copytree(str(folder), str(target))
+        save_json(self.session / 'reused.json', {'source_session': str(source), 'input_runs': count})
+        log('Reused {} completed input runs from {}'.format(count, source))
 
     def hardware(self, cache):
         key = (cache.kb, cache.block, cache.ways)
@@ -780,6 +813,8 @@ class Experiment:
                 self.evaluate(Cache(kb, 64, ways, policy), None, 'task2')
 
     def search_two_level(self):
+        if self.settings.get('search_profile') == 'compact20':
+            return self.search_twenty()
         log('Tasks 3/4: staged two-level design search.')
         l1s = [Cache(k, b, a, 'lru') for k, b, a in itertools.product(
             self.settings.get('l1_sizes_kb', [8, 32, 64]), (32, 64), (1, 4, 8))]
@@ -812,6 +847,26 @@ class Experiment:
         for kb in (128, 256, 512, 1024, 2048, 4096):
             self.evaluate(l1, l2._replace(kb=kb), 'sensitivity_size')
         save_json(self.session / 'part4/sensitivity_anchor.json', best)
+        self.report()
+
+    def search_twenty(self):
+        log('Task 4: exactly 20 configurations, including sensitivity studies.')
+        baseline = Cache(512, 64, 8, 'lru')
+        geometries = [(8, b, a) for b in (32, 64) for a in (1, 4, 8)] + [(32, 32, 1), (32, 32, 4)]
+        candidates = [self.evaluate(Cache(k, b, a, 'lru'), baseline, 'l1_search')
+                      for k, b, a in geometries]
+        anchor = min(candidates, key=selection_key)
+        l1 = Cache(*anchor['l1_config'])
+        for policy in ('random', 'plru', 'round-robin'):
+            self.evaluate(l1._replace(policy=policy), baseline._replace(policy=policy), 'policy_search')
+        self.evaluate(l1, baseline._replace(block=128), 'l2_search')
+        for ways in (1, 2, 4, 8, 16):
+            self.evaluate(l1, baseline._replace(ways=ways), 'sensitivity_associativity')
+        for kb in (128, 256, 512, 1024, 4096):
+            self.evaluate(l1, baseline._replace(kb=kb), 'sensitivity_size')
+        if len([s for s in self.scores.values() if s['l2_config']]) != 20:
+            raise RuntimeError('Compact search must evaluate exactly 20 distinct hierarchies')
+        save_json(self.session / 'part4/sensitivity_anchor.json', anchor)
         self.report()
 
     def report(self):
@@ -958,9 +1013,15 @@ def report_html(exp, best, chosen, frontier, plots):
              '<li>18 single-level configurations; four replacement policies on three configurations. '
              '2 KB direct mapped, 4 KB 2-way, and 8 KB 4-way expose capacity/conflict pressure and '
              'increase replacement freedom. Direct mapping is a policy-independent control.</li>'),
+             ('<li>Compact search: 20 distinct hierarchies. Eight L1 geometries with a fixed '
+              '512 KB / 64 B / 8-way LRU L2; choose the best L1, compare three additional '
+              'matched replacement-policy pairs and a 128 B L2 block size. Vary L2 size and '
+              'associativity around the selected LRU anchor with other parameters fixed. '
+              'This limited search does not establish a global optimum.</li>'
+              if exp.settings.get('search_profile') == 'compact20' else
              '<li>Search L1 geometry with a fixed 512 KB L2; search L2 with the best L1; cross all '
              'four policies independently at both levels for the four best geometry pairs. '
-             'Finally vary L2 size and associativity one at a time around a recorded anchor.</li>',
+             'Finally vary L2 size and associativity one at a time around a recorded anchor.</li>'),
              '<li>Destiny models 2D SRAM at {} nm, 350 K, LOP, normal access, optimized for read latency. '
              'Every configuration and raw output is retained under destiny/. '
              'Read/write latency, hit/miss/write energy, area, and leakage are in hardware.csv.</li>'.format(
@@ -1049,6 +1110,7 @@ def main(argv=None, task4_only=False):
         for entries in settings['benchmark_commands'].values():
             direct_commands(entries)
         settings['task4_only'] = True
+        settings.setdefault('search_profile', 'compact20')
     for key in ('l1_sizes_kb', 'l2_sizes_kb'):
         if key in settings and (not settings[key] or any(
                 not isinstance(v, int) or v <= 0 or v & (v-1) for v in settings[key])):
