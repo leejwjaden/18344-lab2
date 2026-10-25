@@ -1,0 +1,542 @@
+[
+  {
+    "amat_ns": 1.5523590464068655,
+    "area_mm2": 0.115393,
+    "config_id": "3cea642c86fffa15c73e",
+    "data_bytes": 2048,
+    "demand_energy_nj_per_access": 0.032195838179228435,
+    "l1": "2K-32B-1way-lru",
+    "l1_config": [
+      2,
+      32,
+      1,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 0.953846,
+    "metadata_bytes_estimate": 432,
+    "stages": "task1",
+    "total_power_estimate_mw": 33.14968417922843
+  },
+  {
+    "amat_ns": 1.2421267183982443,
+    "area_mm2": 0.0622634,
+    "config_id": "cdadf10821b69ca971e0",
+    "data_bytes": 2048,
+    "demand_energy_nj_per_access": 0.023934849195490836,
+    "l1": "2K-32B-2way-lru",
+    "l1_config": [
+      2,
+      32,
+      2,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 0.60508,
+    "metadata_bytes_estimate": 448,
+    "stages": "task1",
+    "total_power_estimate_mw": 24.539929195490835
+  },
+  {
+    "amat_ns": 1.0988058569001375,
+    "area_mm2": 0.0458077,
+    "config_id": "73f76d00ce4af39f6bb2",
+    "data_bytes": 2048,
+    "demand_energy_nj_per_access": 0.023871290601898538,
+    "l1": "2K-32B-4way-lru",
+    "l1_config": [
+      2,
+      32,
+      4,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 0.450871,
+    "metadata_bytes_estimate": 464,
+    "stages": "task1",
+    "total_power_estimate_mw": 24.322161601898536
+  },
+  {
+    "amat_ns": 1.6337696594667808,
+    "area_mm2": 0.107695,
+    "config_id": "2a10a4280de979c07d51",
+    "data_bytes": 2048,
+    "demand_energy_nj_per_access": 0.06129352978447976,
+    "l1": "2K-64B-1way-lru",
+    "l1_config": [
+      2,
+      64,
+      1,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 0.892263,
+    "metadata_bytes_estimate": 216,
+    "stages": "task1;task2",
+    "total_power_estimate_mw": 62.18579278447976
+  },
+  {
+    "amat_ns": 1.284358771100954,
+    "area_mm2": 0.0545657,
+    "config_id": "ba71dc04d07c3a6ff46c",
+    "data_bytes": 2048,
+    "demand_energy_nj_per_access": 0.042962510202294246,
+    "l1": "2K-64B-2way-lru",
+    "l1_config": [
+      2,
+      64,
+      2,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 0.543497,
+    "metadata_bytes_estimate": 224,
+    "stages": "task1",
+    "total_power_estimate_mw": 43.50600720229424
+  },
+  {
+    "amat_ns": 1.0908191558308646,
+    "area_mm2": 0.0358325,
+    "config_id": "ba35ca54639aac5ca619",
+    "data_bytes": 2048,
+    "demand_energy_nj_per_access": 0.03683527036172672,
+    "l1": "2K-64B-4way-lru",
+    "l1_config": [
+      2,
+      64,
+      4,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 0.376085,
+    "metadata_bytes_estimate": 232,
+    "stages": "task1",
+    "total_power_estimate_mw": 37.21135536172672
+  },
+  {
+    "amat_ns": 1.0189657215376415,
+    "area_mm2": 0.230785,
+    "config_id": "9ed62294099739cea179",
+    "data_bytes": 4096,
+    "demand_energy_nj_per_access": 0.04171923658119128,
+    "l1": "4K-32B-1way-lru",
+    "l1_config": [
+      4,
+      32,
+      1,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 1.90769,
+    "metadata_bytes_estimate": 848,
+    "stages": "task1",
+    "total_power_estimate_mw": 43.626926581191285
+  },
+  {
+    "amat_ns": 0.832807827792814,
+    "area_mm2": 0.124527,
+    "config_id": "9508cdaeeb7d64ce87eb",
+    "data_bytes": 4096,
+    "demand_energy_nj_per_access": 0.032431414963117904,
+    "l1": "4K-32B-2way-lru",
+    "l1_config": [
+      4,
+      32,
+      2,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 1.21016,
+    "metadata_bytes_estimate": 880,
+    "stages": "task1",
+    "total_power_estimate_mw": 33.641574963117904
+  },
+  {
+    "amat_ns": 0.7653338779604555,
+    "area_mm2": 0.0967325,
+    "config_id": "e54c39e0feced3b29f43",
+    "data_bytes": 4096,
+    "demand_energy_nj_per_access": 0.033930175861418874,
+    "l1": "4K-32B-4way-lru",
+    "l1_config": [
+      4,
+      32,
+      4,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 0.923729,
+    "metadata_bytes_estimate": 912,
+    "stages": "task1",
+    "total_power_estimate_mw": 34.85390486141888
+  },
+  {
+    "amat_ns": 1.0468730187322763,
+    "area_mm2": 0.21539,
+    "config_id": "1fa623b19cf964bc5c25",
+    "data_bytes": 4096,
+    "demand_energy_nj_per_access": 0.07967337341720115,
+    "l1": "4K-64B-1way-lru",
+    "l1_config": [
+      4,
+      64,
+      1,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 1.78453,
+    "metadata_bytes_estimate": 424,
+    "stages": "task1",
+    "total_power_estimate_mw": 81.45790341720115
+  },
+  {
+    "amat_ns": 0.8176674370169839,
+    "area_mm2": 0.109131,
+    "config_id": "b5869990e7a89efdd664",
+    "data_bytes": 4096,
+    "demand_energy_nj_per_access": 0.05824385298368082,
+    "l1": "4K-64B-2way-lru",
+    "l1_config": [
+      4,
+      64,
+      2,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 1.08699,
+    "metadata_bytes_estimate": 440,
+    "stages": "task1;task2",
+    "total_power_estimate_mw": 59.33084298368082
+  },
+  {
+    "amat_ns": 0.7300629435134752,
+    "area_mm2": 0.0767822,
+    "config_id": "42cb85ab73df85aa14cc",
+    "data_bytes": 4096,
+    "demand_energy_nj_per_access": 0.05442228385058814,
+    "l1": "4K-64B-4way-lru",
+    "l1_config": [
+      4,
+      64,
+      4,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 0.774157,
+    "metadata_bytes_estimate": 456,
+    "stages": "task1",
+    "total_power_estimate_mw": 55.19644085058815
+  },
+  {
+    "amat_ns": 0.7369855391127719,
+    "area_mm2": 0.461571,
+    "config_id": "2112b416a74a0bdbd31f",
+    "data_bytes": 8192,
+    "demand_energy_nj_per_access": 0.05712871316126181,
+    "l1": "8K-32B-1way-lru",
+    "l1_config": [
+      8,
+      32,
+      1,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 3.81538,
+    "metadata_bytes_estimate": 1664,
+    "stages": "task1",
+    "total_power_estimate_mw": 60.944093161261804
+  },
+  {
+    "amat_ns": 0.582811199776557,
+    "area_mm2": 0.249054,
+    "config_id": "a0a66673582f88bde818",
+    "data_bytes": 8192,
+    "demand_energy_nj_per_access": 0.042858663465365855,
+    "l1": "8K-32B-2way-lru",
+    "l1_config": [
+      8,
+      32,
+      2,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 2.42032,
+    "metadata_bytes_estimate": 1728,
+    "stages": "task1",
+    "total_power_estimate_mw": 45.278983465365854
+  },
+  {
+    "amat_ns": 0.5554711661452119,
+    "area_mm2": 0.183231,
+    "config_id": "76b4331380800e985de3",
+    "data_bytes": 8192,
+    "demand_energy_nj_per_access": 0.04346385428780197,
+    "l1": "8K-32B-4way-lru",
+    "l1_config": [
+      8,
+      32,
+      4,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 1.80348,
+    "metadata_bytes_estimate": 1792,
+    "stages": "task1",
+    "total_power_estimate_mw": 45.26733428780197
+  },
+  {
+    "amat_ns": 0.7461415034971484,
+    "area_mm2": 0.43078,
+    "config_id": "51ba753dd48be8099e26",
+    "data_bytes": 8192,
+    "demand_energy_nj_per_access": 0.10899367752268521,
+    "l1": "8K-64B-1way-lru",
+    "l1_config": [
+      8,
+      64,
+      1,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 3.56905,
+    "metadata_bytes_estimate": 832,
+    "stages": "task1",
+    "total_power_estimate_mw": 112.56272752268521
+  },
+  {
+    "amat_ns": 0.5146685179347026,
+    "area_mm2": 0.218263,
+    "config_id": "bbb36b19c598d86e7175",
+    "data_bytes": 8192,
+    "demand_energy_nj_per_access": 0.07660651426041955,
+    "l1": "8K-64B-2way-lru",
+    "l1_config": [
+      8,
+      64,
+      2,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 2.17399,
+    "metadata_bytes_estimate": 864,
+    "stages": "task1",
+    "total_power_estimate_mw": 78.78050426041955
+  },
+  {
+    "amat_ns": 0.4856873353466352,
+    "area_mm2": 0.14333,
+    "config_id": "f29d100f90692865aa29",
+    "data_bytes": 8192,
+    "demand_energy_nj_per_access": 0.06665224832095187,
+    "l1": "8K-64B-4way-lru",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "lru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 1.50434,
+    "metadata_bytes_estimate": 896,
+    "stages": "task1;task2",
+    "total_power_estimate_mw": 68.15658832095187
+  },
+  {
+    "amat_ns": 1.6337687259570708,
+    "area_mm2": 0.107695,
+    "config_id": "400fdb7402535feb3cfe",
+    "data_bytes": 2048,
+    "demand_energy_nj_per_access": 0.06129352559703155,
+    "l1": "2K-64B-1way-random",
+    "l1_config": [
+      2,
+      64,
+      1,
+      "random"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 0.892263,
+    "metadata_bytes_estimate": 216,
+    "stages": "task2",
+    "total_power_estimate_mw": 62.185788597031554
+  },
+  {
+    "amat_ns": 1.6337696594667808,
+    "area_mm2": 0.107695,
+    "config_id": "9998fccd87d41b5394e6",
+    "data_bytes": 2048,
+    "demand_energy_nj_per_access": 0.06129352978447976,
+    "l1": "2K-64B-1way-plru",
+    "l1_config": [
+      2,
+      64,
+      1,
+      "plru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 0.892263,
+    "metadata_bytes_estimate": 220,
+    "stages": "task2",
+    "total_power_estimate_mw": 62.18579278447976
+  },
+  {
+    "amat_ns": 1.6337696594667808,
+    "area_mm2": 0.107695,
+    "config_id": "5195e6740a5de7a2fd5d",
+    "data_bytes": 2048,
+    "demand_energy_nj_per_access": 0.06129352978447976,
+    "l1": "2K-64B-1way-round-robin",
+    "l1_config": [
+      2,
+      64,
+      1,
+      "round-robin"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 0.892263,
+    "metadata_bytes_estimate": 216,
+    "stages": "task2",
+    "total_power_estimate_mw": 62.18579278447976
+  },
+  {
+    "amat_ns": 0.8857172715013394,
+    "area_mm2": 0.109131,
+    "config_id": "02365ccc8c037751113d",
+    "data_bytes": 4096,
+    "demand_energy_nj_per_access": 0.05862741182141563,
+    "l1": "4K-64B-2way-random",
+    "l1_config": [
+      4,
+      64,
+      2,
+      "random"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 1.08699,
+    "metadata_bytes_estimate": 432,
+    "stages": "task2",
+    "total_power_estimate_mw": 59.71440182141562
+  },
+  {
+    "amat_ns": 0.8176683780567032,
+    "area_mm2": 0.109131,
+    "config_id": "2b40bb6a3c558e9e74c4",
+    "data_bytes": 4096,
+    "demand_energy_nj_per_access": 0.05824385664544286,
+    "l1": "4K-64B-2way-plru",
+    "l1_config": [
+      4,
+      64,
+      2,
+      "plru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 1.08699,
+    "metadata_bytes_estimate": 440,
+    "stages": "task2",
+    "total_power_estimate_mw": 59.33084664544286
+  },
+  {
+    "amat_ns": 0.8743521449171254,
+    "area_mm2": 0.109131,
+    "config_id": "77edb8da2c97e17bc5bf",
+    "data_bytes": 4096,
+    "demand_energy_nj_per_access": 0.05856338680416069,
+    "l1": "4K-64B-2way-round-robin",
+    "l1_config": [
+      4,
+      64,
+      2,
+      "round-robin"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 1.08699,
+    "metadata_bytes_estimate": 436,
+    "stages": "task2",
+    "total_power_estimate_mw": 59.650376804160686
+  },
+  {
+    "amat_ns": 0.5383491540074286,
+    "area_mm2": 0.14333,
+    "config_id": "0f665634521bfb307455",
+    "data_bytes": 8192,
+    "demand_energy_nj_per_access": 0.06699750157271236,
+    "l1": "8K-64B-4way-random",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "random"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 1.50434,
+    "metadata_bytes_estimate": 864,
+    "stages": "task2",
+    "total_power_estimate_mw": 68.50184157271237
+  },
+  {
+    "amat_ns": 0.4842788352345239,
+    "area_mm2": 0.14333,
+    "config_id": "f7120f8e149c5c3231ae",
+    "data_bytes": 8192,
+    "demand_energy_nj_per_access": 0.06664309011855804,
+    "l1": "8K-64B-4way-plru",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "plru"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 1.50434,
+    "metadata_bytes_estimate": 880,
+    "stages": "task2",
+    "total_power_estimate_mw": 68.14743011855802
+  },
+  {
+    "amat_ns": 0.5300123952979139,
+    "area_mm2": 0.14333,
+    "config_id": "e65cfeacdee3608fa5d4",
+    "data_bytes": 8192,
+    "demand_energy_nj_per_access": 0.0669422408066171,
+    "l1": "8K-64B-4way-round-robin",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "round-robin"
+    ],
+    "l2": "none",
+    "l2_config": null,
+    "leakage_mw": 1.50434,
+    "metadata_bytes_estimate": 872,
+    "stages": "task2",
+    "total_power_estimate_mw": 68.4465808066171
+  }
+]

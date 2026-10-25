@@ -1,0 +1,15 @@
+{
+  "raw_runs": 54,
+  "task1_rows": 36,
+  "task2_rows": 24,
+  "configurations": 27,
+  "plots": 6,
+  "checks": [
+    "raw markers and counters",
+    "complete geometry/policy matrices",
+    "finite hardware metrics",
+    "independent AMAT recomputation",
+    "relative raw-stat paths",
+    "native cache tests"
+  ]
+}

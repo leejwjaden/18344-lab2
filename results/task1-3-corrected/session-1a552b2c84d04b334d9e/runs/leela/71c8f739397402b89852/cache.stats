@@ -1,0 +1,9 @@
+accesses: 7949466488
+hits: 7324053997
+misses: 625412491
+reads: 5806888616
+writes: 2142577872
+read_hits: 5300664379
+write_hits: 2023389618
+miss_rate: 0.0786735
+dram_accesses: 625412491

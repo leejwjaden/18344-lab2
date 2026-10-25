@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="510" viewBox="0 0 1100 510">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="sans-serif" font-size="12" fill="#253047">
+<text x="90" y="32" font-size="18">leela: task1</text>
+<path d="M90 430.0H850" stroke="#e2e8f0"/><text x="12" y="434.0">0</text>
+<text x="90.0" y="453" text-anchor="middle">0.76</text>
+<path d="M90 362.0H850" stroke="#e2e8f0"/><text x="12" y="366.0">0.03766</text>
+<text x="242.0" y="453" text-anchor="middle">1.456</text>
+<path d="M90 294.0H850" stroke="#e2e8f0"/><text x="12" y="298.0">0.07532</text>
+<text x="394.0" y="453" text-anchor="middle">2.152</text>
+<path d="M90 226.0H850" stroke="#e2e8f0"/><text x="12" y="230.0">0.113</text>
+<text x="546.0" y="453" text-anchor="middle">2.848</text>
+<path d="M90 158.0H850" stroke="#e2e8f0"/><text x="12" y="162.0">0.1506</text>
+<text x="698.0" y="453" text-anchor="middle">3.544</text>
+<path d="M90 90.0H850" stroke="#e2e8f0"/><text x="12" y="94.0">0.1883</text>
+<text x="850.0" y="453" text-anchor="middle">4.24</text>
+<polyline fill="none" stroke="#2563eb" points="142.41,166.90 360.80,231.59 797.59,266.69"/>
+<circle cx="142.41379310344826" cy="166.89865991643893" r="3" fill="#2563eb"/>
+<circle cx="360.80459770114936" cy="231.59146506876672" r="3" fill="#2563eb"/>
+<circle cx="797.5862068965517" cy="266.68693329567174" r="3" fill="#2563eb"/>
+<rect x="870" y="70" width="10" height="10" fill="#2563eb"/><text x="887" y="80">2 KiB, 32 B</text>
+<polyline fill="none" stroke="#e15759" points="142.41,134.35 360.80,212.94 797.59,264.41"/>
+<circle cx="142.41379310344826" cy="134.3478260869565" r="3" fill="#e15759"/>
+<circle cx="360.80459770114936" cy="212.94283611840083" r="3" fill="#e15759"/>
+<circle cx="797.5862068965517" cy="264.41348379231727" r="3" fill="#e15759"/>
+<rect x="870" y="93" width="10" height="10" fill="#e15759"/><text x="887" y="103">2 KiB, 64 B</text>
+<polyline fill="none" stroke="#059669" points="142.41,287.94 360.80,318.76 797.59,332.49"/>
+<circle cx="142.41379310344826" cy="287.93988067028374" r="3" fill="#059669"/>
+<circle cx="360.80459770114936" cy="318.758052516954" r="3" fill="#059669"/>
+<circle cx="797.5862068965517" cy="332.49137438628816" r="3" fill="#059669"/>
+<rect x="870" y="116" width="10" height="10" fill="#059669"/><text x="887" y="126">4 KiB, 32 B</text>
+<polyline fill="none" stroke="#9333ea" points="142.41,271.41 360.80,319.61 797.59,342.51"/>
+<circle cx="142.41379310344826" cy="271.40974370117567" r="3" fill="#9333ea"/>
+<circle cx="360.80459770114936" cy="319.6118275997875" r="3" fill="#9333ea"/>
+<circle cx="797.5862068965517" cy="342.5099319681896" r="3" fill="#9333ea"/>
+<rect x="870" y="139" width="10" height="10" fill="#9333ea"/><text x="887" y="149">4 KiB, 64 B</text>
+<polyline fill="none" stroke="#d97706" points="142.41,348.03 360.80,371.67 797.59,374.84"/>
+<circle cx="142.41379310344826" cy="348.03283173367026" r="3" fill="#d97706"/>
+<circle cx="360.80459770114936" cy="371.67064125675944" r="3" fill="#d97706"/>
+<circle cx="797.5862068965517" cy="374.8374337957534" r="3" fill="#d97706"/>
+<rect x="870" y="162" width="10" height="10" fill="#d97706"/><text x="887" y="172">8 KiB, 32 B</text>
+<polyline fill="none" stroke="#0891b2" points="142.41,337.63 360.80,386.29 797.59,389.66"/>
+<circle cx="142.41379310344826" cy="337.625672860117" r="3" fill="#0891b2"/>
+<circle cx="360.80459770114936" cy="386.2906276369978" r="3" fill="#0891b2"/>
+<circle cx="797.5862068965517" cy="389.6573635931856" r="3" fill="#0891b2"/>
+<rect x="870" y="185" width="10" height="10" fill="#0891b2"/><text x="887" y="195">8 KiB, 64 B</text>
+<text x="460" y="492" text-anchor="middle">Associativity</text>
+<text x="18" y="70">Miss rate</text>
+</g></svg>

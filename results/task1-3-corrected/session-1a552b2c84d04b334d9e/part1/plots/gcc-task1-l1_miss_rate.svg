@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="510" viewBox="0 0 1100 510">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="sans-serif" font-size="12" fill="#253047">
+<text x="90" y="32" font-size="18">gcc: task1</text>
+<path d="M90 430.0H850" stroke="#e2e8f0"/><text x="12" y="434.0">0</text>
+<text x="90.0" y="453" text-anchor="middle">0.76</text>
+<path d="M90 362.0H850" stroke="#e2e8f0"/><text x="12" y="366.0">0.03247</text>
+<text x="242.0" y="453" text-anchor="middle">1.456</text>
+<path d="M90 294.0H850" stroke="#e2e8f0"/><text x="12" y="298.0">0.06493</text>
+<text x="394.0" y="453" text-anchor="middle">2.152</text>
+<path d="M90 226.0H850" stroke="#e2e8f0"/><text x="12" y="230.0">0.0974</text>
+<text x="546.0" y="453" text-anchor="middle">2.848</text>
+<path d="M90 158.0H850" stroke="#e2e8f0"/><text x="12" y="162.0">0.1299</text>
+<text x="698.0" y="453" text-anchor="middle">3.544</text>
+<path d="M90 90.0H850" stroke="#e2e8f0"/><text x="12" y="94.0">0.1623</text>
+<text x="850.0" y="453" text-anchor="middle">4.24</text>
+<polyline fill="none" stroke="#2563eb" points="142.41,134.35 360.80,195.57 797.59,223.55"/>
+<circle cx="142.41379310344826" cy="134.3478260869565" r="3" fill="#2563eb"/>
+<circle cx="360.80459770114936" cy="195.57313765019498" r="3" fill="#2563eb"/>
+<circle cx="797.5862068965517" cy="223.55342336631878" r="3" fill="#2563eb"/>
+<rect x="870" y="70" width="10" height="10" fill="#2563eb"/><text x="887" y="80">2 KiB, 32 B</text>
+<polyline fill="none" stroke="#e15759" points="142.41,135.97 360.80,198.39 797.59,229.50"/>
+<circle cx="142.41379310344826" cy="135.96941085931672" r="3" fill="#e15759"/>
+<circle cx="360.80459770114936" cy="198.38519403651287" r="3" fill="#e15759"/>
+<circle cx="797.5862068965517" cy="229.49997159812602" r="3" fill="#e15759"/>
+<rect x="870" y="93" width="10" height="10" fill="#e15759"/><text x="887" y="103">2 KiB, 64 B</text>
+<polyline fill="none" stroke="#059669" points="142.41,231.13 360.80,276.28 797.59,295.30"/>
+<circle cx="142.41379310344826" cy="231.13256372807547" r="3" fill="#059669"/>
+<circle cx="360.80459770114936" cy="276.28237574145976" r="3" fill="#059669"/>
+<circle cx="797.5862068965517" cy="295.2993014424334" r="3" fill="#059669"/>
+<rect x="870" y="116" width="10" height="10" fill="#059669"/><text x="887" y="126">4 KiB, 32 B</text>
+<polyline fill="none" stroke="#9333ea" points="142.41,237.79 360.80,281.80 797.59,299.04"/>
+<circle cx="142.41379310344826" cy="237.7893122291615" r="3" fill="#9333ea"/>
+<circle cx="360.80459770114936" cy="281.80108549286405" r="3" fill="#9333ea"/>
+<circle cx="797.5862068965517" cy="299.04311025289326" r="3" fill="#9333ea"/>
+<rect x="870" y="139" width="10" height="10" fill="#9333ea"/><text x="887" y="149">4 KiB, 64 B</text>
+<polyline fill="none" stroke="#d97706" points="142.41,289.99 360.80,327.23 797.59,340.43"/>
+<circle cx="142.41379310344826" cy="289.98599675868104" r="3" fill="#d97706"/>
+<circle cx="360.80459770114936" cy="327.2297908744307" r="3" fill="#d97706"/>
+<circle cx="797.5862068965517" cy="340.43065027867425" r="3" fill="#d97706"/>
+<rect x="870" y="162" width="10" height="10" fill="#d97706"/><text x="887" y="172">8 KiB, 32 B</text>
+<polyline fill="none" stroke="#0891b2" points="142.41,297.36 360.80,339.74 797.59,353.21"/>
+<circle cx="142.41379310344826" cy="297.3587955045788" r="3" fill="#0891b2"/>
+<circle cx="360.80459770114936" cy="339.74257178372704" r="3" fill="#0891b2"/>
+<circle cx="797.5862068965517" cy="353.20682335438056" r="3" fill="#0891b2"/>
+<rect x="870" y="185" width="10" height="10" fill="#0891b2"/><text x="887" y="195">8 KiB, 64 B</text>
+<text x="460" y="492" text-anchor="middle">Associativity</text>
+<text x="18" y="70">Miss rate</text>
+</g></svg>

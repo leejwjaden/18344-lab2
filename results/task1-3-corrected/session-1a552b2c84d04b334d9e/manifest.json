@@ -1,0 +1,162 @@
+{
+  "aslr_disabled": true,
+  "environment": {
+    "LC_ALL": "C",
+    "LD_LIBRARY_PATH": "/afs/ece.cmu.edu/class/ece344/opt/pin/pin-3.18-98332-gaebd7b1e6-gcc-linux/intel64/lib-ext:/afs/ece.cmu.edu/class/ece344/opt/pin/pin-3.18-98332-gaebd7b1e6-gcc-linux/intel64/runtime/pincrt:/afs/ece.cmu.edu/class/ece344/opt/pin/pin-3.18-98332-gaebd7b1e6-gcc-linux/extras/xed-intel64/lib:",
+    "OMP_NUM_THREADS": "1",
+    "PATH": "/afs/ece.cmu.edu/class/ece344/opt/spec2017/bin:/afs/ece.cmu.edu/class/ece344/opt/pin/pin-3.18-98332-gaebd7b1e6-gcc-linux/intel64/bin:/afs/ece.cmu.edu/class/ece344/opt/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"
+  },
+  "machine": "Linux-4.18.0-553.146.1.el8_10.x86_64-x86_64-with-redhat-8.10-Ootpa",
+  "pintool_sha256": "4534007992459384b29b01c5d773d1097a7491d1e41d319e1be94d9eebd3acee",
+  "settings": {
+    "benchmark_commands": {
+      "gcc": [
+        {
+          "argv": [
+            "./sgcc_base.mytest-m64",
+            "t1.c",
+            "-O3",
+            "-finline-limit=50000",
+            "-o",
+            "t1.opts-O3_-finline-limit_50000.s"
+          ],
+          "cwd": "/scratch/ece344-mwu3/benchspec/CPU/602.gcc_s/run/run_base_test_mytest-m64.0004"
+        }
+      ],
+      "leela": [
+        {
+          "argv": [
+            "./leela_s_base.mytest-m64",
+            "test.sgf"
+          ],
+          "cwd": "/scratch/ece344-mwu3/benchspec/CPU/641.leela_s/run/run_base_test_mytest-m64.0002"
+        }
+      ]
+    },
+    "input_size": "test",
+    "pin": "/afs/ece.cmu.edu/class/ece344/opt/pin/inst/pin",
+    "pin_root": "/afs/ece.cmu.edu/class/ece344/opt/pin/inst",
+    "single_level_only": true
+  },
+  "source_sha256": {
+    "cache.cpp": "fba367188e8d783aa56967115f12c7f41e26923cb29d9c1a68f7e91da84fbe9d",
+    "cache.h": "6ba4f5ab3b0411cb7948f1f72cf7905ed89a7643a6bcdd77c237c5789eab8eb0",
+    "memory-hierarchy.cpp": "b80ada3c5ac9c4affa867d402cc0c7a2a598fb4311efbcca58b7b6c53eb45b98",
+    "script.py": "89e7cb606605f83fa1049de16cfe4f336c0a99dcb4011387b28f941ac2642ab9"
+  },
+  "tool_sha256": {
+    "cell": "3d57ace6e5149201397488663d05c81047e783a5d8340e2472e572afc0ae8f56",
+    "destiny": "7f9ee2ae028f856a4d7bc9e74d733c6abdf82a25f161ddce0832113d939f8ad3",
+    "pin": "2ef404af5a352d8b7efbb72043fcbca58cc83211052708a297992402843fb445"
+  },
+  "tools": {
+    "benchmarks": {
+      "gcc": [
+        {
+          "argv": [
+            "/scratch/ece344-mwu3/benchspec/CPU/602.gcc_s/run/run_base_test_mytest-m64.0004/sgcc_base.mytest-m64",
+            "t1.c",
+            "-O3",
+            "-finline-limit=50000",
+            "-o",
+            "t1.opts-O3_-finline-limit_50000.s"
+          ],
+          "cwd": "/scratch/ece344-mwu3/benchspec/CPU/602.gcc_s/run/run_base_test_mytest-m64.0004",
+          "source": "explicit benchmark_commands",
+          "stdin": null
+        }
+      ],
+      "leela": [
+        {
+          "argv": [
+            "/scratch/ece344-mwu3/benchspec/CPU/641.leela_s/run/run_base_test_mytest-m64.0002/leela_s_base.mytest-m64",
+            "test.sgf"
+          ],
+          "cwd": "/scratch/ece344-mwu3/benchspec/CPU/641.leela_s/run/run_base_test_mytest-m64.0002",
+          "source": "explicit benchmark_commands",
+          "stdin": null
+        }
+      ]
+    },
+    "cell": "/afs/ece.cmu.edu/class/ece344/opt/destiny/config/sample_SRAM.cell",
+    "destiny": "/afs/ece.cmu.edu/class/ece344/opt/destiny/destiny",
+    "input_size": "test",
+    "pin": "/afs/ece.cmu.edu/class/ece344/opt/pin/pin-3.18-98332-gaebd7b1e6-gcc-linux/pin",
+    "pin_root": "/afs/ece.cmu.edu/class/ece344/opt/pin/pin-3.18-98332-gaebd7b1e6-gcc-linux"
+  },
+  "version": 1,
+  "workloads": {
+    "gcc": [
+      {
+        "command": {
+          "argv": [
+            "/scratch/ece344-mwu3/benchspec/CPU/602.gcc_s/run/run_base_test_mytest-m64.0004/sgcc_base.mytest-m64",
+            "t1.c",
+            "-O3",
+            "-finline-limit=50000",
+            "-o",
+            "t1.opts-O3_-finline-limit_50000.s"
+          ],
+          "cwd": "/scratch/ece344-mwu3/benchspec/CPU/602.gcc_s/run/run_base_test_mytest-m64.0004",
+          "source": "explicit benchmark_commands",
+          "stdin": null
+        },
+        "executable_sha256": "35cc73f1adde88e9840284d84a474f702f2455686ead486fc09ff225a49eb9fe",
+        "files": [
+          [
+            "compare.cmd",
+            "48adc462ff66698329a4c8ab6d1aaefb38db02a7309013cc644784173a899765"
+          ],
+          [
+            "control",
+            "9114609f801dfd5fd3c0c510fde241b58b705522cb29ad10f8f99eca68d62e43"
+          ],
+          [
+            "sgcc_base.mytest-m64",
+            "35cc73f1adde88e9840284d84a474f702f2455686ead486fc09ff225a49eb9fe"
+          ],
+          [
+            "speccmds.cmd",
+            "13f87d3e02fec2bffa006b4c55457265018608e7f94ec172409dbfbdb3510bf4"
+          ],
+          [
+            "t1.c",
+            "de7b86d79a68965adb62e750101d9211224884b2236053d906d1e23057bb6ad1"
+          ]
+        ]
+      }
+    ],
+    "leela": [
+      {
+        "command": {
+          "argv": [
+            "/scratch/ece344-mwu3/benchspec/CPU/641.leela_s/run/run_base_test_mytest-m64.0002/leela_s_base.mytest-m64",
+            "test.sgf"
+          ],
+          "cwd": "/scratch/ece344-mwu3/benchspec/CPU/641.leela_s/run/run_base_test_mytest-m64.0002",
+          "source": "explicit benchmark_commands",
+          "stdin": null
+        },
+        "executable_sha256": "4f131b17b3b7f55cd5b343809d8d7565af5bfe70edb915249c70750997ac33c7",
+        "files": [
+          [
+            "compare.cmd",
+            "7cb7f40bc06bcc7bfd84a973236adf5da55ec8afcd07bea456727c149d5f29c7"
+          ],
+          [
+            "leela_s_base.mytest-m64",
+            "4f131b17b3b7f55cd5b343809d8d7565af5bfe70edb915249c70750997ac33c7"
+          ],
+          [
+            "speccmds.cmd",
+            "ebee145cb036c6eec0a6e4cec9ff93bc718af17e6c2b20095edbb4e13f4e7cec"
+          ],
+          [
+            "test.sgf",
+            "93d9ad9ed8ea06071ced736755dbc4695adf71e185c463f5dd2727b3a131d2a2"
+          ]
+        ]
+      }
+    ]
+  }
+}

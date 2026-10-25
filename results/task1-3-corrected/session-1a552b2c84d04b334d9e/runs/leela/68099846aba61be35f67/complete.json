@@ -1,0 +1,14 @@
+{
+  "elapsed_seconds": 441.04961228370667,
+  "pintool_sha256": "4534007992459384b29b01c5d773d1097a7491d1e41d319e1be94d9eebd3acee",
+  "stats": {
+    "accesses": 7943358844,
+    "dram_accesses": 954849004,
+    "hits": 6988509840,
+    "misses": 954849004,
+    "read_hits": 4975514559,
+    "reads": 5802298064,
+    "write_hits": 2012995281,
+    "writes": 2141060780
+  }
+}

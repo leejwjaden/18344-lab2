@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/setarch",
+    "x86_64",
+    "-R",
+    "/afs/ece.cmu.edu/class/ece344/opt/pin/pin-3.18-98332-gaebd7b1e6-gcc-linux/pin",
+    "-t",
+    "/afs/ece.cmu.edu/usr/mwu3/Private/18344/18344-lab2/obj-intel64/memory-hierarchy.so",
+    "-o",
+    "/afs/ece.cmu.edu/usr/mwu3/Private/18344/18344-lab2/lab2-output/session-1a552b2c84d04b334d9e/runs/leela/b27940d759360e2cef2c/cache.stats",
+    "-l1c",
+    "4",
+    "-l1b",
+    "64",
+    "-l1a",
+    "4",
+    "-l1r",
+    "lru",
+    "--",
+    "/scratch/ece344-mwu3/benchspec/CPU/641.leela_s/run/run_base_test_mytest-m64.0002/leela_s_base.mytest-m64",
+    "test.sgf"
+  ],
+  "cwd": "/afs/ece.cmu.edu/usr/mwu3/Private/18344/18344-lab2/lab2-output/session-1a552b2c84d04b334d9e/runs/leela/b27940d759360e2cef2c/work",
+  "source": {
+    "argv": [
+      "/scratch/ece344-mwu3/benchspec/CPU/641.leela_s/run/run_base_test_mytest-m64.0002/leela_s_base.mytest-m64",
+      "test.sgf"
+    ],
+    "cwd": "/scratch/ece344-mwu3/benchspec/CPU/641.leela_s/run/run_base_test_mytest-m64.0002",
+    "source": "explicit benchmark_commands",
+    "stdin": null
+  }
+}

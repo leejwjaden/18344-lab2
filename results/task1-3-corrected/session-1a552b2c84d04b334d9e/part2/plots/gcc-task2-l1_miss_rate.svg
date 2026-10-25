@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="510" viewBox="0 0 1100 510">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="sans-serif" font-size="12" fill="#253047">
+<text x="90" y="32" font-size="18">gcc: task2</text>
+<path d="M90 430.0H850" stroke="#e2e8f0"/><text x="12" y="434.0">0</text>
+<text x="90.0" y="453" text-anchor="middle">-0.24</text>
+<path d="M90 362.0H850" stroke="#e2e8f0"/><text x="12" y="366.0">0.03229</text>
+<text x="242.0" y="453" text-anchor="middle">0.456</text>
+<path d="M90 294.0H850" stroke="#e2e8f0"/><text x="12" y="298.0">0.06457</text>
+<text x="394.0" y="453" text-anchor="middle">1.152</text>
+<path d="M90 226.0H850" stroke="#e2e8f0"/><text x="12" y="230.0">0.09686</text>
+<text x="546.0" y="453" text-anchor="middle">1.848</text>
+<path d="M90 158.0H850" stroke="#e2e8f0"/><text x="12" y="162.0">0.1291</text>
+<text x="698.0" y="453" text-anchor="middle">2.544</text>
+<path d="M90 90.0H850" stroke="#e2e8f0"/><text x="12" y="94.0">0.1614</text>
+<text x="850.0" y="453" text-anchor="middle">3.24</text>
+<rect x="115.41379310344826" y="134.34824086673416" width="16.2" height="295.65175913326584" fill="#2563eb"/>
+<rect x="333.80459770114936" y="134.3478260869565" width="16.2" height="295.6521739130435" fill="#2563eb"/>
+<rect x="552.1954022988506" y="134.3478260869565" width="16.2" height="295.6521739130435" fill="#2563eb"/>
+<rect x="770.5862068965517" y="134.3478260869565" width="16.2" height="295.6521739130435" fill="#2563eb"/>
+<rect x="870" y="70" width="10" height="10" fill="#2563eb"/><text x="887" y="80">2 KiB, 1 way</text>
+<rect x="133.41379310344826" y="268.29321283886964" width="16.2" height="161.70678716113036" fill="#e15759"/>
+<rect x="351.80459770114936" y="280.9837654182847" width="16.2" height="149.0162345817153" fill="#e15759"/>
+<rect x="570.1954022988506" y="280.983347298529" width="16.2" height="149.016652701471" fill="#e15759"/>
+<rect x="788.5862068965517" y="269.4832245746309" width="16.2" height="160.51677542536908" fill="#e15759"/>
+<rect x="870" y="93" width="10" height="10" fill="#e15759"/><text x="887" y="103">4 KiB, 2 way</text>
+<rect x="151.41379310344826" y="341.14283568082055" width="16.2" height="88.85716431917945" fill="#059669"/>
+<rect x="369.80459770114936" y="352.7833073990045" width="16.2" height="77.21669260099549" fill="#059669"/>
+<rect x="588.1954022988506" y="354.2758081513979" width="16.2" height="75.72419184860212" fill="#059669"/>
+<rect x="806.5862068965517" y="342.7078494321971" width="16.2" height="87.29215056780288" fill="#059669"/>
+<rect x="870" y="116" width="10" height="10" fill="#059669"/><text x="887" y="126">8 KiB, 4 way</text>
+<text x="460" y="492" text-anchor="middle">Policy: 0=random, 1=LRU, 2=bit-PLRU, 3=RR</text>
+<text x="18" y="70">Miss rate</text>
+</g></svg>
