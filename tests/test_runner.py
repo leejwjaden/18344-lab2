@@ -327,6 +327,22 @@ class RunnerTests(unittest.TestCase):
                 self.assertTrue((exp.session / 'part4/plots/pareto-benchmarks.svg').exists())
                 self.assertTrue((exp.session / 'COMPLETE.json').exists())
                 self.assertIn('Task 4 only', (exp.session / 'report.html').read_text(encoding='utf-8'))
+                exp.settings = {'single_level_only': True}
+                exp.rows, exp.scores = [], {}
+                exp.session = root / 'single-level-only'
+                exp.session.mkdir()
+                calls.clear()
+                exp.search()
+                self.assertEqual(len(calls), 54)
+                self.assertTrue(all('-l2c' not in argv for argv in calls))
+                self.assertFalse((exp.session / 'part4').exists())
+                completion = json.loads((exp.session / 'COMPLETE.json').read_text())
+                self.assertEqual(completion['task1'], 36)
+                self.assertEqual(completion['task2'], 24)
+                self.assertEqual(len(list(exp.session.glob('part*/plots/*.svg'))), 6)
+                exp.rows, exp.scores = [], {}
+                exp.search()
+                self.assertEqual(len(calls), 54)
 
 
 if __name__ == '__main__':

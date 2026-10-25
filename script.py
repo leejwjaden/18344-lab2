@@ -770,6 +770,8 @@ class Experiment:
     def export_parts(self):
         """Publish per-part tables as runs finish, including reused configurations."""
         for part in ('part1', 'part2', 'part4'):
+            if self.settings.get('single_level_only') and part == 'part4':
+                continue
             if self.settings.get('task4_only') and part != 'part4':
                 continue
             folder = self.session / part
@@ -801,7 +803,49 @@ class Experiment:
     def search(self):
         if not self.settings.get('task4_only'):
             self.search_single_level()
+        if self.settings.get('single_level_only'):
+            return self.report_single_level()
         self.search_two_level()
+
+    def report_single_level(self):
+        self.export_parts()
+        write_csv(self.session / 'measurements.csv', self.rows)
+        plots = []
+        for name in sorted(self.tools['benchmarks']):
+            for stage, field, ylabel in (('task1', 'amat_ns', 'AMAT (ns)'),
+                                         ('task1', 'l1_miss_rate', 'Miss rate'),
+                                         ('task2', 'l1_miss_rate', 'Miss rate')):
+                series = {}
+                for row in self.rows:
+                    if row['benchmark'] != name or stage not in row['stages'].split(';'):
+                        continue
+                    if stage == 'task1':
+                        label = '{} KiB, {} B'.format(row['l1_kb'], row['l1_block'])
+                        x = row['l1_ways']
+                    else:
+                        label = '{} KiB, {} way'.format(row['l1_kb'], row['l1_ways'])
+                        x = POLICIES.index(row['l1_policy'])
+                    series.setdefault(label, []).append((x, row[field]))
+                path = 'part{}/plots/{}-{}-{}.svg'.format(stage[-1], name, stage, field)
+                (self.session / path).parent.mkdir(parents=True, exist_ok=True)
+                svg_chart(self.session / path, name + ': ' + stage,
+                          'Associativity' if stage == 'task1' else 'Policy: 0=random, 1=LRU, 2=bit-PLRU, 3=RR',
+                          ylabel, series, bars=stage == 'task2')
+                plots.append(path)
+        counts = {stage: sum(stage in r['stages'].split(';') for r in self.rows)
+                  for stage in ('task1', 'task2')}
+        if counts != {'task1': 36, 'task2': 24} or len(self.rows) != 54:
+            raise RuntimeError('Incomplete single-level experiment matrix: ' + str(counts))
+        (self.session / 'report.html').write_text(
+            '<!doctype html><meta charset="utf-8"><h1>Tasks 1 and 2</h1>'
+            '<p>18 LRU geometries; four policies on three geometries; gcc and leela. '
+            'AMAT uses Destiny hit/miss latency and 9.5 ns DRAM. '
+            'Three LRU geometries are shared between tasks.</p>' +
+            ''.join('<img style="width:100%" src="{}">'.format(p) for p in plots), encoding='utf-8')
+        save_json(self.session / 'COMPLETE.json', dict(counts, configurations=len(self.scores),
+                  benchmark_measurements=len(self.rows), mode='single_level_only',
+                  finished_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())))
+        log('COMPLETE: ' + str(self.session / 'report.html'))
 
     def search_single_level(self):
         log('Task 1: capacity, block-size, and associativity sweep.')
@@ -1099,10 +1143,15 @@ def main(argv=None, task4_only=False):
         'Collect Task 4 on Linux using explicit benchmark commands in task4_config.json.'
         if task4_only else __doc__))
     parser.add_argument('--check', action='store_true', help='Discover dependencies without running experiments')
+    parser.add_argument('--single-level-only', action='store_true', help='Collect only Tasks 1 and 2')
     parser.add_argument('--diagnose', action='store_true', help='List SPEC paths and search issues; no builds, downloads, or benchmark runs')
     parser.add_argument('--config', type=Path, default=ROOT / ('task4_config.json' if task4_only else 'lab2_config.json'))
     args = parser.parse_args(argv)
     settings = json.loads(args.config.read_text()) if args.config.exists() else {}
+    if args.single_level_only:
+        if task4_only:
+            raise ValueError('Single-level mode cannot be combined with task4.py')
+        settings['single_level_only'] = True
     if task4_only:
         if set(settings.get('benchmark_commands', {})) != {'gcc', 'leela'}:
             raise ValueError('Create task4_config.json from task4_config.example.json and enter the gcc and leela '
