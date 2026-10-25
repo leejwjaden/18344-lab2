@@ -13,7 +13,7 @@
 \begin{center}
 {\LARGE\bfseries Lab 2: Memory Hierarchy}\par\vspace{5pt}
 {\large Set associativity, replacement, and a two-level design search}\par
-Maxwell Wu (mwu3)\quad |\quad October 24, 2026
+Maxwell Wu (mwu3)\quad |\quad October 25, 2026
 \end{center}
 \section*{Overview and evidence status}
 The simulator models a parameterized data-cache hierarchy driven by Pin memory
@@ -25,18 +25,18 @@ Its equally weighted mean AMAT is 0.25416 ns, modeled area is 6.26309 mm$^2$, an
 estimated total cache power is 152.72 mW at an assumed $10^9$ L1 accesses/s.
 This is the best design in the measured set, not a demonstrated global optimum.
 
-\textbf{Submission caveat.} The saved evidence does not fully satisfy Task 2's
-three-configuration comparison of all four policies. The corrected collection
-contains that comparison at only one L1 geometry. Legacy results cover three
-geometries but use tree-PLRU and omit round-robin. This report covers all tasks
-while distinguishing those datasets; missing measurements are not invented.
+The corrected single-level collection adds 27 distinct configurations and 54
+benchmark measurements: 18 LRU geometries for Task 1 and four policies at each
+of three geometries for Task 2. Three LRU configurations are shared by the tasks.
+The report uses those actual single-level executions; legacy tree-PLRU results
+are excluded from the experimental comparisons.
 
 \begin{table}[H]\centering\small
 \caption{Evidence available for the handout's requirements.}
 \begin{tabular}{p{.10\linewidth}p{.43\linewidth}p{.36\linewidth}}\toprule
 Task & Evidence in this report & Qualification \\\midrule
-1 & Corrected L1 miss rates at eight geometries; single-level AMAT plots & AMAT derived from L1 counters, not separate single-level runs. \\
-2 & Four policies at one corrected geometry; legacy three-geometry plot & Two more corrected geometry comparisons are needed. \\
+1 & 18 LRU geometries on both benchmarks; miss-rate and AMAT plots & Single-level runs with Destiny latencies. \\
+2 & Four policies at three geometries on both benchmarks & One run per case; one random seed. \\
 3 & Parameterized hierarchy and deterministic tests & Demand-only model; no writeback or coherence. \\
 4 & 20 designs, Destiny metrics, Pareto and sensitivity plots & Bounded search; one run per benchmark/design. \\\bottomrule
 \end{tabular}\end{table}
@@ -106,20 +106,24 @@ the handout's single-level model is
 \begin{equation}
 \mathrm{AMAT}_1=(1-m_1)t_{1h}+m_1(t_{1m}+9.5\ \mathrm{ns}).
 \end{equation}
-L1 decisions in this simulator do not depend on L2 contents or timing. The
-corrected L1 counters from the initial eight Task 4 geometries therefore support
-a \emph{derived} single-level estimate for the recorded reference streams by
-treating every L1 miss as a DRAM access. These are not separate single-level
-executions. The plots use this calculation, not the legacy AMAT column.
-\fig{task1-amat}{Derived single-level AMAT using corrected L1 counters and Destiny latencies. Lines connect measured points; the 32 KiB curve has no 8-way point.}{f:t1a}
-\fig{task1-misses}{Measured L1 miss rates for the same eight corrected geometries.}{f:t1m}
+The single-level sweep crosses capacities 2, 4, and 8 KiB, block sizes 32 and
+64 bytes, and associativities 1, 2, and 4, with LRU throughout. Both benchmarks
+execute at all 18 geometries. Every L1 miss accesses DRAM; Destiny supplies the
+geometry-specific latency, so AMAT includes the cost of a more complex lookup.
+\fig{task1-amat}{Single-level AMAT from 36 benchmark measurements and Destiny latencies. Dashed lines use 32-byte blocks; solid lines use 64-byte blocks.}{f:t1a}
+\fig{task1-misses}{Measured L1 miss rates for the same 18 geometries per benchmark.}{f:t1m}
 At 8 KiB/64 B, increasing associativity from 1 to 4 lowers gcc's miss rate from
-6.202\% to 3.666\% and leela's from 5.114\% to 2.234\%. AMAT falls from 0.7914
-to 0.5536 ns for gcc and from 0.6884 to 0.4178 ns for leela. Eight ways reduces
-misses further but raises leela's AMAT to 0.4312 ns as hit latency rises. Thus
-fewer misses need not mean faster access. At four ways, 64-byte blocks outperform
-32-byte blocks for both workloads here. Increasing capacity to 32 KiB with
-32-byte blocks also reduces misses, but this limited grid establishes no universal optimum.
+6.333\% to 3.666\% and leela's from 5.116\% to 2.234\%. AMAT falls from 0.8038
+to 0.5535 ns for gcc and from 0.6885 to 0.4178 ns for leela. Most of leela's gain
+occurs by two ways (0.4252 ns); the next increase produces a smaller benefit.
+Associativity reduces conflict pressure, but lookup latency must also be counted.
+At four ways, doubling the block size from 32 to 64 bytes lowers gcc AMAT at
+all three capacities. Leela instead rises from 1.0603 to 1.0718 ns at 2 KiB,
+then improves at 4 and 8 KiB. Larger blocks exploit spatial locality but leave
+fewer resident blocks; their benefit depends on the working set. At 64 B/four
+ways, increasing capacity from 2 to 8 KiB reduces gcc AMAT from 1.1099 to
+0.5535 ns and leela from 1.0718 to 0.4178 ns. These gains describe the measured
+test streams, not a universal capacity or associativity optimum.
 
 \clearpage
 \section{Task 2: replacement-policy evaluation}
@@ -128,21 +132,26 @@ all with 64-byte blocks. They provide a direct-mapped control and increasing
 capacity/associativity to expose conflict and reuse effects. Since size and ways
 change together, compare policies \emph{within} a geometry; cross-geometry
 comparisons do not isolate either parameter.
-\fig{task2-legacy}{Legacy three-geometry results. Exact commands and benchmark identity were not recorded. The old PLRU label is shown as tree-PLRU; round-robin has no legacy measurement. These are historical observations, not corrected Task 2 completion evidence.}{f:t2old}
-At 4 KiB/2-way, legacy LRU and tree-PLRU both report 3.367\% misses versus
-random's 4.231\%. At 8 KiB/4-way, rates are 1.880\% (LRU), 1.951\% (tree-PLRU),
-and 2.235\% (random). Direct-mapped rates vary from 7.701\% to 7.849\%, although
-replacement cannot affect a fixed direct-mapped stream. That variation warns
-against causal conclusions from small differences; the records do not identify
-its cause.
-\fig{task2-corrected}{Corrected four-policy comparison at 8 KiB/64 B/4-way L1. L2 is 512 KiB/64 B/8-way and both levels use the named policy. L1 miss rate is independent of L2 policy in this model.}{f:t2new}
-The corresponding two-level mean AMAT is 0.28260 ns (LRU), 0.28322 ns
-(bit-PLRU), 0.28595 ns (round-robin), and 0.28852 ns (random). LRU is best here;
-bit-PLRU is close. These single-run results do not imply a general ordering.
-Changing both policies together does not isolate each level's AMAT contribution.
-\textbf{Remaining requirement:} collect all four corrected policies for gcc and
-leela at the other two geometries. The legacy plot cannot substitute for this
-or be relabeled as bit-PLRU evidence.
+\fig{task2-corrected}{All four policies on all three single-level geometries, with 64-byte blocks. RR denotes round-robin. Each panel compares one fixed geometry and benchmark.}{f:t2new}
+The direct-mapped control gives 14.038\% misses for gcc and 16.373\% for leela
+under all four policies at the displayed precision. Gcc's small spread of about
+0.000020 percentage points is run variation, not a replacement advantage:
+there is only one possible victim. Disabling ASLR does not guarantee identical
+reference streams across separate instrumented executions.
+
+At 4 KiB/2-way, LRU and bit-PLRU are effectively tied: 7.075\% misses for gcc
+and 6.113\% for leela. Random gives 7.678\% and 6.946\%, and round-robin gives
+7.622\% and 6.763\%. Recency protects reused blocks better here. With two ways,
+the bit-PLRU rule selects the least recently touched way, explaining its close
+agreement with LRU.
+
+At 8 KiB/4-way, gcc slightly favors bit-PLRU (3.595\%) over LRU (3.666\%),
+whereas leela favors LRU (2.234\%) over bit-PLRU (2.275\%). Random gives
+4.219\% and 2.793\%; round-robin gives 4.145\% and 2.691\%. Approximate recency can alter eviction decisions in ways
+that benefit a particular stream; exact LRU is not always the best policy.
+Round-robin provides a cheap deterministic alternative but ignores hit recency.
+The full four-policy comparison is shown above; single runs and one random seed
+do not establish statistical significance or a workload-independent ordering.
 
 \clearpage
 \section{Task 4: objective and complete design catalog}
@@ -299,8 +308,8 @@ cd report
 pdflatex main.tex
 pdflatex main.tex
 \end{verbatim}
-Tectonic is an alternative compiler. Derived Task 1 values are saved in
-\texttt{generated/task1-derived.csv}. All seven figures are vector PDFs with
+Tectonic is an alternative compiler. Corrected Tasks 1 and 2 measurements are
+saved under \path{results/task1-3-corrected/}. All six figures are vector PDFs with
 PNG previews, redrawn from numerical records rather than HTML screenshots.
 
 \subsection{Limits on conclusions}
@@ -312,13 +321,21 @@ a choice rather than an inherent objective. Simplified writes, virtual addresses
 and omitted overlap limit real-processor claims. Counter consistency and exit
 status do not substitute for SPEC output-equivalence validation.
 
-\subsection{Remaining submission work}
-Task 4 data and the requested Pareto, per-benchmark, and sensitivity plots are
-complete for the declared scope. Task 3 functionality and Task 1 measured miss
-rates/derived AMAT are documented. Task 2 still needs corrected four-policy
-measurements at two additional geometries on both workloads. Until those are
-collected, this is an evidence-qualified report, not a claim that every
-experimental requirement is fully complete.
+\subsection{Corrected collection and verification}
+The corrected session is \texttt{session-1a552b2c84d04b334d9e} under
+\path{results/task1-3-corrected/}. Reproduce it with explicit gcc/leela commands
+in \texttt{lab123\_config.json}:
+\begin{verbatim}
+python3 script.py --single-level-only --config lab123_config.json
+\end{verbatim}
+The collection was resumed after interruption; completed run records were
+validated and reused. The final export contains 54 unique benchmark runs,
+36 Task 1 rows and 24 Task 2 rows (six rows are shared), hardware models,
+commands, raw statistics, and per-task plots. Counter records are checked against
+completion markers, AMAT is recomputed, and the complete geometry/policy matrix
+is checked before export. The existing 40 two-level records support Task 3,
+along with the native cache tests. Task 4 retains its completed 20-design search.
+All requested experimental comparisons are covered within the declared model.
 
 \section*{Sources}
 \begin{enumerate}
@@ -326,8 +343,8 @@ experimental requirement is fully complete.
 pp.~1--3. The document itself is dated September 30, 2024.
 \item \texttt{results/task4/session-3973386ea9622d3cee1b/}: manifest, measurement
 and hardware tables, design-space table, raw run records, and Destiny outputs.
-\item \texttt{results/task1-3/task2/task2.csv}, used only in the labeled
-historical policy comparison.
+\item \path{results/task1-3-corrected/}: corrected single-level measurements,
+hardware tables, raw run records, and validation summary.
 \item Repository simulator and runner source; result-export commit
 \texttt{1243851}, compact-search runner commit \texttt{1facf8a}.
 \end{enumerate}

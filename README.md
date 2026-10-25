@@ -1,5 +1,21 @@
 # Lab 2: automatic data collection
 
+## Corrected Tasks 1 and 2 and final report
+
+Use the same explicit benchmark-command configuration as Task 4, without
+`reuse_session` or `task4_only`, and run:
+
+```bash
+python3 script.py --single-level-only --config lab123_config.json
+```
+
+This runs 18 LRU geometries for Task 1 and four policies at three geometries
+for Task 2. Shared cases are reused: 27 configurations, 54 gcc/leela runs,
+36 Task 1 rows, and 24 Task 2 rows. Each part has its own CSVs and `plots/`.
+Rerun the same command to resume an interrupted collection. Native simulator
+tests run before collection; Task 3 is additionally exercised by the two-level
+Task 4 measurements. The final writeup and rebuild instructions are in `report/`.
+
 ## Task 4 with explicit benchmark commands
 
 `task4.py` uses the same direct `pin ... -- executable arguments` launch approach

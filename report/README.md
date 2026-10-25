@@ -1,14 +1,9 @@
 # Lab 2 LaTeX report
 
-Open `main.pdf` for the compiled 10-page report or `main.tex` to edit it.
-The project is also compatible with the Codex built-in LaTeX editor.
-
-The report covers Tasks 1--4, with seven vector figures, the 20-design catalog,
-Pareto and sensitivity analysis, implementation details, and Destiny-based
-implementability discussion. Task 1 AMAT is derived from corrected L1 counters
-and Destiny latencies. Task 2's legacy and corrected datasets are explicitly
-separated: corrected four-policy runs at two more geometries remain necessary
-for full compliance with that experimental requirement.
+`main.pdf` is the compiled report; `main.tex` is the editable source.
+The report covers Tasks 1--4, including corrected single-level measurements,
+all four policies at three geometries on both benchmarks, the 20-design search,
+Pareto and sensitivity analysis, and Destiny-based implementability analysis.
 
 ## Rebuild
 
@@ -22,20 +17,16 @@ pdflatex main.tex
 pdflatex main.tex
 ```
 
-Alternatively, run `tectonic main.tex` from this folder. The figure generator
-uses the committed `results/` files and does not launch benchmarks. It writes
-PDF/PNG figures, generated LaTeX tables, derived Task 1 data, and an analysis
-JSON under this project. Existing source experiment files are not modified.
-
-The report was compiled with Tectonic and the built-in LaTeX compiler. All pages
-were rendered and visually reviewed. The figure generator requires matplotlib;
-no external plotting tools are required to compile the already-generated source.
+Tectonic is also supported. Figures are vector PDFs with PNG previews.
+The generator reads committed results; it never launches benchmarks.
 
 ## Evidence
 
-Primary session: `../results/task4/session-3973386ea9622d3cee1b/`.
-Legacy Task 2 source: `../results/task1-3/task2/task2.csv`.
-Handout: `../18344-f25-lab2-memoryhierarchy.pdf`.
+- Corrected Tasks 1/2: `../results/task1-3-corrected/session-1a552b2c84d04b334d9e/`
+- Two-level Tasks 3/4: `../results/task4/session-3973386ea9622d3cee1b/`
+- Handout: `../18344-f25-lab2-memoryhierarchy.pdf`
 
-Do not remove the Task 2 evidence caveat unless the missing experiments have
-actually been collected and incorporated.
+The corrected export includes `validation.json`, raw counters, completion records,
+commands, hardware models, and per-part plots. Legacy tree-PLRU data is not used
+in the report. Report conclusions are limited to the documented test workloads,
+single-run measurements, and demand-only cache model.

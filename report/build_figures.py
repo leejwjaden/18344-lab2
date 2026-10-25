@@ -47,46 +47,32 @@ def style(ax):
     ax.grid(axis='y', alpha=.22)
     ax.set_axisbelow(True)
 
-derived = []
-for r in rows:
-    if 'l1_search' not in r['stages'].split(';'):
-        continue
-    h = hardware[tuple(int(r['l1_' + k]) for k in ('kb', 'block', 'ways'))]
-    m = float(r['l1_miss_rate'])
-    derived.append(dict(r, single_level_amat_ns=(1-m)*float(h['hit_ns']) + m*(float(h['miss_ns'])+9.5)))
-with (GEN / 'task1-derived.csv').open('w', newline='') as f:
-    writer = csv.DictWriter(f, fieldnames=['benchmark','config_id','l1','l1_miss_rate','single_level_amat_ns'])
-    writer.writeheader()
-    writer.writerows({k:r[k] for k in writer.fieldnames} for r in derived)
-for field, ylabel, name in [('single_level_amat_ns', 'Derived single-level AMAT (ns)', 'task1-amat'),
+CORRECTED = ROOT / 'results/task1-3-corrected/session-1a552b2c84d04b334d9e'
+assert (CORRECTED / 'COMPLETE.json').exists()
+derived = read(CORRECTED / 'part1/measurements.csv')
+policy_rows = read(CORRECTED / 'part2/measurements.csv')
+assert len(derived) == 36 and len(policy_rows) == 24
+for field, ylabel, name in [('amat_ns', 'Single-level AMAT (ns)', 'task1-amat'),
                             ('l1_miss_rate', 'L1 miss rate (%)', 'task1-misses')]:
-    fig, axes = plt.subplots(1, 2, figsize=(7, 2.5), layout='constrained')
+    fig, axes = plt.subplots(1, 2, figsize=(7, 2.8), layout='constrained')
     for ax, bench in zip(axes, ('gcc','leela')):
-        for i,(kb,block) in enumerate([(8,32),(8,64),(32,32)]):
-            rr = sorted([r for r in derived if r['benchmark']==bench and int(r['l1_kb'])==kb and int(r['l1_block'])==block], key=lambda r:int(r['l1_ways']))
-            ax.plot([int(r['l1_ways']) for r in rr], [float(r[field])*(100 if field=='l1_miss_rate' else 1) for r in rr], marker='o', color=colors[i], label=f'{kb} KiB, {block} B')
-        ax.set(title=bench, xlabel='L1 associativity (ways)', ylabel=ylabel, xticks=[1,4,8])
+        for i,kb in enumerate((2,4,8)):
+            for block in (32,64):
+                rr=sorted([r for r in derived if r['benchmark']==bench and int(r['l1_kb'])==kb and int(r['l1_block'])==block], key=lambda r:int(r['l1_ways']))
+                ax.plot([int(r['l1_ways']) for r in rr], [float(r[field])*(100 if field=='l1_miss_rate' else 1) for r in rr], marker='o', linestyle='--' if block==32 else '-', color=colors[i], label=f'{kb} KiB, {block} B')
+        ax.set(title=bench, xlabel='L1 associativity (ways)', ylabel=ylabel, xticks=[1,2,4])
         style(ax)
-    axes[1].legend(fontsize=7)
+    axes[1].legend(fontsize=6, ncol=2)
     save(fig,name)
-
-legacy = read(ROOT / 'results/task1-3/task2/task2.csv')
-fig, axes = plt.subplots(1,3,figsize=(7,2.5),layout='constrained')
-for ax,(kb,ways) in zip(axes,[(2,1),(4,2),(8,4)]):
-    rr=[r for r in legacy if int(r['l1_size_kb'])==kb]
-    ax.bar(['Random','LRU','Tree-PLRU'],[100*float(r['l1_miss_rate']) for r in rr],color=colors[:3])
-    ax.set(title=f'{kb} KiB, {ways}-way, 64 B',ylabel='Legacy miss rate (%)')
-    ax.tick_params(axis='x',labelsize=8); style(ax)
-save(fig,'task2-legacy')
 policies=['random','lru','plru','round-robin']
-fig, ax=plt.subplots(figsize=(7,2.5),layout='constrained')
+fig, axes=plt.subplots(2,3,figsize=(7,4.5),layout='constrained')
 for j,bench in enumerate(('gcc','leela')):
-    rr=[]
-    for policy in policies:
-        rr.append(next(r for r in rows if r['benchmark']==bench and r['l1']==f'8K-64B-4way-{policy}' and r['l2']==f'512K-64B-8way-{policy}'))
-    ax.bar(np.arange(4)+(j-.5)*.34,[100*float(r['l1_miss_rate']) for r in rr],width=.34,label=bench,color=colors[j])
-ax.set(xticks=range(4),xticklabels=['Random','LRU','Bit-PLRU','Round-robin'],ylabel='Corrected L1 miss rate (%)')
-style(ax);ax.legend();save(fig,'task2-corrected')
+    for ax,(kb,ways) in zip(axes[j],[(2,1),(4,2),(8,4)]):
+        rr=[next(r for r in policy_rows if r['benchmark']==bench and int(r['l1_kb'])==kb and r['l1_policy']==p) for p in policies]
+        ax.bar(['Random','LRU','Bit-PLRU','RR'],[100*float(r['l1_miss_rate']) for r in rr],color=colors)
+        ax.set(title=f'{bench}: {kb} KiB, {ways}-way',ylabel='Miss rate (%)')
+        ax.tick_params(axis='x',labelsize=7);style(ax)
+save(fig,'task2-corrected')
 
 fig, axes=plt.subplots(1,2,figsize=(7,3.1),layout='constrained')
 for ax,field,xlabel in zip(axes,['area_mm2','total_power_estimate_mw'],['Total area (mm²)','Estimated total power (mW)']):
@@ -132,7 +118,7 @@ table('winner',['Benchmark',r'L1 miss (\%)',r'L2 local miss (\%)',r'DRAM / L1 (\
  [r['benchmark'],f"{100*float(r['l1_miss_rate']):.3f}",f"{100*float(r['l2_miss_rate']):.3f}",f"{100*int(r['dram_accesses'])/int(r['accesses']):.3f}",f"{float(r['amat_ns']):.4f}"] for r in winner],'lrrrr')
 table('hardware',['Metric','L1','L2'],[[label,*[f'{float(hardware[tuple(best[k][:3])][field]):.5g}' for k in ['l1_config','l2_config']]] for label,field in [
  ('Read-hit latency (ns)','hit_ns'),('Miss latency (ns)','miss_ns'),('Write latency (ns)','write_ns'),('Read-hit energy (nJ)','hit_nj'),('Write energy (nJ)','write_nj'),('Leakage (mW)','leakage_mw'),('Area (mm$^2$)','area_mm2'),('Tag-array area (mm$^2$)','tag_area_mm2')]],'lrr')
-summary={'task1':[{k:r[k] for k in ['benchmark','l1','l1_miss_rate','single_level_amat_ns']} for r in derived],
-         'winner':winner,'policy':[r for r in rows if r['stages']=='policy_search']}
+summary={'task1':[{k:r[k] for k in ['benchmark','l1','l1_miss_rate','amat_ns']} for r in derived],
+         'winner':winner,'policy':policy_rows}
 (GEN/'analysis.json').write_text(json.dumps(summary,indent=2))
-print('Generated seven vector figures, four tables, and traceable Task 1 derived data.')
+print('Generated six vector figures and four tables from validated measurements.')
