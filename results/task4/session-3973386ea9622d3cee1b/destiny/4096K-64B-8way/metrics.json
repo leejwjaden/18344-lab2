@@ -1,0 +1,11 @@
+{
+  "area_mm2": 32.0592,
+  "hit_nj": 1.28236,
+  "hit_ns": 1.55234,
+  "leakage_mw": 324.355,
+  "miss_nj": 1.28236,
+  "miss_ns": 0.413143,
+  "tag_area_mm2": 3.01117,
+  "write_nj": 1.23955,
+  "write_ns": 0.975168
+}

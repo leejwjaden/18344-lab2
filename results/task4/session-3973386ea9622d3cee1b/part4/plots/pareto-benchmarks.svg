@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="510" viewBox="0 0 1100 510">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="sans-serif" font-size="12" fill="#253047">
+<text x="90" y="32" font-size="18">Pareto configurations by benchmark</text>
+<path d="M90 430.0H850" stroke="#e2e8f0"/><text x="12" y="434.0">0</text>
+<text x="90.0" y="453" text-anchor="middle">0.6</text>
+<path d="M90 362.0H850" stroke="#e2e8f0"/><text x="12" y="366.0">0.07957</text>
+<text x="242.0" y="453" text-anchor="middle">1.76</text>
+<path d="M90 294.0H850" stroke="#e2e8f0"/><text x="12" y="298.0">0.1591</text>
+<text x="394.0" y="453" text-anchor="middle">2.92</text>
+<path d="M90 226.0H850" stroke="#e2e8f0"/><text x="12" y="230.0">0.2387</text>
+<text x="546.0" y="453" text-anchor="middle">4.08</text>
+<path d="M90 158.0H850" stroke="#e2e8f0"/><text x="12" y="162.0">0.3183</text>
+<text x="698.0" y="453" text-anchor="middle">5.24</text>
+<path d="M90 90.0H850" stroke="#e2e8f0"/><text x="12" y="94.0">0.3979</text>
+<text x="850.0" y="453" text-anchor="middle">6.4</text>
+<rect x="124.41379310344828" y="192.09606888982802" width="16.2" height="237.90393111017198" fill="#2563eb"/>
+<rect x="255.44827586206895" y="155.90324346378492" width="16.2" height="274.0967565362151" fill="#2563eb"/>
+<rect x="386.4827586206896" y="153.89771049652603" width="16.2" height="276.10228950347397" fill="#2563eb"/>
+<rect x="517.5172413793102" y="151.19640935431556" width="16.2" height="278.80359064568444" fill="#2563eb"/>
+<rect x="648.551724137931" y="144.46951782630316" width="16.2" height="285.53048217369684" fill="#2563eb"/>
+<rect x="779.5862068965517" y="134.3478260869565" width="16.2" height="295.6521739130435" fill="#2563eb"/>
+<rect x="870" y="70" width="10" height="10" fill="#2563eb"/><text x="887" y="80">gcc</text>
+<rect x="142.41379310344828" y="233.5121271806118" width="16.2" height="196.4878728193882" fill="#e15759"/>
+<rect x="273.44827586206895" y="222.47083478111324" width="16.2" height="207.52916521888676" fill="#e15759"/>
+<rect x="404.4827586206896" y="221.72384582583385" width="16.2" height="208.27615417416615" fill="#e15759"/>
+<rect x="535.5172413793102" y="217.13317333702815" width="16.2" height="212.86682666297185" fill="#e15759"/>
+<rect x="666.551724137931" y="222.0350602934756" width="16.2" height="207.9649397065244" fill="#e15759"/>
+<rect x="797.5862068965517" y="213.45761616374722" width="16.2" height="216.54238383625278" fill="#e15759"/>
+<rect x="870" y="93" width="10" height="10" fill="#e15759"/><text x="887" y="103">leela</text>
+<text x="460" y="492" text-anchor="middle">Design number (table below)</text>
+<text x="18" y="70">AMAT (ns)</text>
+</g></svg>

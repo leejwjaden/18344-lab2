@@ -1,0 +1,502 @@
+[
+  {
+    "amat_ns": 0.2940700024708343,
+    "area_mm2": 7.367251,
+    "config_id": "bc3fe440abaa0d9321d6",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.08526722360455367,
+    "l1": "8K-32B-1way-lru",
+    "l1_config": [
+      8,
+      32,
+      1,
+      "lru"
+    ],
+    "l2": "512K-64B-8way-lru",
+    "l2_config": [
+      512,
+      64,
+      8,
+      "lru"
+    ],
+    "leakage_mw": 68.34788,
+    "metadata_bytes_estimate": 54912,
+    "stages": "l1_search",
+    "total_power_estimate_mw": 153.61510360455367
+  },
+  {
+    "amat_ns": 0.2876710686167231,
+    "area_mm2": 7.088911,
+    "config_id": "d7b3fa29740494af4f00",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.06265683736951598,
+    "l1": "8K-32B-4way-lru",
+    "l1_config": [
+      8,
+      32,
+      4,
+      "lru"
+    ],
+    "l2": "512K-64B-8way-lru",
+    "l2_config": [
+      512,
+      64,
+      8,
+      "lru"
+    ],
+    "leakage_mw": 66.33597999999999,
+    "metadata_bytes_estimate": 55040,
+    "stages": "l1_search",
+    "total_power_estimate_mw": 128.99281736951596
+  },
+  {
+    "amat_ns": 0.3099285788931269,
+    "area_mm2": 7.093083,
+    "config_id": "46fc444c9437b8db10a1",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.07688812846007645,
+    "l1": "8K-32B-8way-lru",
+    "l1_config": [
+      8,
+      32,
+      8,
+      "lru"
+    ],
+    "l2": "512K-64B-8way-lru",
+    "l2_config": [
+      512,
+      64,
+      8,
+      "lru"
+    ],
+    "leakage_mw": 66.05769,
+    "metadata_bytes_estimate": 55104,
+    "stages": "l1_search",
+    "total_power_estimate_mw": 142.94581846007645
+  },
+  {
+    "amat_ns": 0.2927545319488874,
+    "area_mm2": 7.336460000000001,
+    "config_id": "0eb8cbf17a5a6b857408",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.13698021073261868,
+    "l1": "8K-64B-1way-lru",
+    "l1_config": [
+      8,
+      64,
+      1,
+      "lru"
+    ],
+    "l2": "512K-64B-8way-lru",
+    "l2_config": [
+      512,
+      64,
+      8,
+      "lru"
+    ],
+    "leakage_mw": 68.10155,
+    "metadata_bytes_estimate": 54080,
+    "stages": "l1_search",
+    "total_power_estimate_mw": 205.0817607326187
+  },
+  {
+    "amat_ns": 0.2826000114898357,
+    "area_mm2": 7.04901,
+    "config_id": "8088c2f1387dfbc3ea6f",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.08267930065844832,
+    "l1": "8K-64B-4way-lru",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "lru"
+    ],
+    "l2": "512K-64B-8way-lru",
+    "l2_config": [
+      512,
+      64,
+      8,
+      "lru"
+    ],
+    "leakage_mw": 66.03684,
+    "metadata_bytes_estimate": 54144,
+    "stages": "l1_search;sensitivity_associativity;sensitivity_size",
+    "total_power_estimate_mw": 148.71614065844832
+  },
+  {
+    "amat_ns": 0.30470696563827354,
+    "area_mm2": 7.0410520000000005,
+    "config_id": "cf9e089160e9801eb1c8",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.09340545979415804,
+    "l1": "8K-64B-8way-lru",
+    "l1_config": [
+      8,
+      64,
+      8,
+      "lru"
+    ],
+    "l2": "512K-64B-8way-lru",
+    "l2_config": [
+      512,
+      64,
+      8,
+      "lru"
+    ],
+    "leakage_mw": 65.69427999999999,
+    "metadata_bytes_estimate": 54176,
+    "stages": "l1_search",
+    "total_power_estimate_mw": 159.09973979415804
+  },
+  {
+    "amat_ns": 0.31966397204364505,
+    "area_mm2": 8.527330000000001,
+    "config_id": "2adba7eb844a5bde8889",
+    "data_bytes": 557056,
+    "demand_energy_nj_per_access": 0.12326753884842329,
+    "l1": "32K-32B-1way-lru",
+    "l1_config": [
+      32,
+      32,
+      1,
+      "lru"
+    ],
+    "l2": "512K-64B-8way-lru",
+    "l2_config": [
+      512,
+      64,
+      8,
+      "lru"
+    ],
+    "leakage_mw": 77.5658,
+    "metadata_bytes_estimate": 59648,
+    "stages": "l1_search",
+    "total_power_estimate_mw": 200.83333884842327
+  },
+  {
+    "amat_ns": 0.30194790619044837,
+    "area_mm2": 7.638603,
+    "config_id": "c325e44d99803e87f4cb",
+    "data_bytes": 557056,
+    "demand_energy_nj_per_access": 0.09607265669985612,
+    "l1": "32K-32B-4way-lru",
+    "l1_config": [
+      32,
+      32,
+      4,
+      "lru"
+    ],
+    "l2": "512K-64B-8way-lru",
+    "l2_config": [
+      512,
+      64,
+      8,
+      "lru"
+    ],
+    "leakage_mw": 71.74643999999999,
+    "metadata_bytes_estimate": 60160,
+    "stages": "l1_search",
+    "total_power_estimate_mw": 167.81909669985612
+  },
+  {
+    "amat_ns": 0.28851905488773344,
+    "area_mm2": 7.04901,
+    "config_id": "0bcfbece856c3a54afbd",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.08564516703597756,
+    "l1": "8K-64B-4way-random",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "random"
+    ],
+    "l2": "512K-64B-8way-random",
+    "l2_config": [
+      512,
+      64,
+      8,
+      "random"
+    ],
+    "leakage_mw": 66.03684,
+    "metadata_bytes_estimate": 51040,
+    "stages": "policy_search",
+    "total_power_estimate_mw": 151.68200703597756
+  },
+  {
+    "amat_ns": 0.28322221947921356,
+    "area_mm2": 7.04901,
+    "config_id": "665aeb2c4cddd1707e48",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.08263589997077186,
+    "l1": "8K-64B-4way-plru",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "plru"
+    ],
+    "l2": "512K-64B-8way-plru",
+    "l2_config": [
+      512,
+      64,
+      8,
+      "plru"
+    ],
+    "leakage_mw": 66.03684,
+    "metadata_bytes_estimate": 52080,
+    "stages": "policy_search",
+    "total_power_estimate_mw": 148.67273997077186
+  },
+  {
+    "amat_ns": 0.285948168668418,
+    "area_mm2": 7.04901,
+    "config_id": "b5e8826d05690c593ed4",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.08510168945311473,
+    "l1": "8K-64B-4way-round-robin",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "round-robin"
+    ],
+    "l2": "512K-64B-8way-round-robin",
+    "l2_config": [
+      512,
+      64,
+      8,
+      "round-robin"
+    ],
+    "leakage_mw": 66.03684,
+    "metadata_bytes_estimate": 51432,
+    "stages": "policy_search",
+    "total_power_estimate_mw": 151.13852945311473
+  },
+  {
+    "amat_ns": 0.2541579685000962,
+    "area_mm2": 6.26309,
+    "config_id": "cbe34201c88da29afa4f",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.09340375854273412,
+    "l1": "8K-64B-4way-lru",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "lru"
+    ],
+    "l2": "512K-128B-8way-lru",
+    "l2_config": [
+      512,
+      128,
+      8,
+      "lru"
+    ],
+    "leakage_mw": 59.31864,
+    "metadata_bytes_estimate": 27520,
+    "stages": "l2_search",
+    "total_power_estimate_mw": 152.7223985427341
+  },
+  {
+    "amat_ns": 0.292328674241995,
+    "area_mm2": 6.78414,
+    "config_id": "185ca76398f550188084",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.08083252305810211,
+    "l1": "8K-64B-4way-lru",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "lru"
+    ],
+    "l2": "512K-64B-1way-lru",
+    "l2_config": [
+      512,
+      64,
+      1,
+      "lru"
+    ],
+    "leakage_mw": 67.19674,
+    "metadata_bytes_estimate": 48000,
+    "stages": "sensitivity_associativity",
+    "total_power_estimate_mw": 148.02926305810212
+  },
+  {
+    "amat_ns": 0.2844103774385588,
+    "area_mm2": 7.43095,
+    "config_id": "054efdd0f8f6b741f397",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.08328817927211106,
+    "l1": "8K-64B-4way-lru",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "lru"
+    ],
+    "l2": "512K-64B-2way-lru",
+    "l2_config": [
+      512,
+      64,
+      2,
+      "lru"
+    ],
+    "leakage_mw": 81.82634,
+    "metadata_bytes_estimate": 50048,
+    "stages": "sensitivity_associativity",
+    "total_power_estimate_mw": 165.11451927211107
+  },
+  {
+    "amat_ns": 0.28179414239158274,
+    "area_mm2": 6.06042,
+    "config_id": "509283cc4205ee28bf87",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.08039281277537325,
+    "l1": "8K-64B-4way-lru",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "lru"
+    ],
+    "l2": "512K-64B-4way-lru",
+    "l2_config": [
+      512,
+      64,
+      4,
+      "lru"
+    ],
+    "leakage_mw": 65.43654000000001,
+    "metadata_bytes_estimate": 52096,
+    "stages": "sensitivity_associativity",
+    "total_power_estimate_mw": 145.82935277537325
+  },
+  {
+    "amat_ns": 0.28340461333913713,
+    "area_mm2": 6.48311,
+    "config_id": "64da66a10518dee7e80d",
+    "data_bytes": 532480,
+    "demand_energy_nj_per_access": 0.0844088959264927,
+    "l1": "8K-64B-4way-lru",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "lru"
+    ],
+    "l2": "512K-64B-16way-lru",
+    "l2_config": [
+      512,
+      64,
+      16,
+      "lru"
+    ],
+    "leakage_mw": 58.72264,
+    "metadata_bytes_estimate": 56192,
+    "stages": "sensitivity_associativity",
+    "total_power_estimate_mw": 143.1315359264927
+  },
+  {
+    "amat_ns": 0.29967952225791933,
+    "area_mm2": 2.30928,
+    "config_id": "83233ec54731e8166e75",
+    "data_bytes": 139264,
+    "demand_energy_nj_per_access": 0.07746629411046202,
+    "l1": "8K-64B-4way-lru",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "lru"
+    ],
+    "l2": "128K-64B-8way-lru",
+    "l2_config": [
+      128,
+      64,
+      8,
+      "lru"
+    ],
+    "leakage_mw": 20.09284,
+    "metadata_bytes_estimate": 14720,
+    "stages": "sensitivity_size",
+    "total_power_estimate_mw": 97.55913411046203
+  },
+  {
+    "amat_ns": 0.2887388591464163,
+    "area_mm2": 3.5961700000000003,
+    "config_id": "0bedbb6d037b4096ec89",
+    "data_bytes": 270336,
+    "demand_energy_nj_per_access": 0.07935718973549652,
+    "l1": "8K-64B-4way-lru",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "lru"
+    ],
+    "l2": "256K-64B-8way-lru",
+    "l2_config": [
+      256,
+      64,
+      8,
+      "lru"
+    ],
+    "leakage_mw": 33.77054,
+    "metadata_bytes_estimate": 28032,
+    "stages": "sensitivity_size",
+    "total_power_estimate_mw": 113.12772973549652
+  },
+  {
+    "amat_ns": 0.2833381258765037,
+    "area_mm2": 12.40553,
+    "config_id": "a97ffb521eea99b80014",
+    "data_bytes": 1056768,
+    "demand_energy_nj_per_access": 0.08823409102079804,
+    "l1": "8K-64B-4way-lru",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "lru"
+    ],
+    "l2": "1024K-64B-8way-lru",
+    "l2_config": [
+      1024,
+      64,
+      8,
+      "lru"
+    ],
+    "leakage_mw": 111.03134,
+    "metadata_bytes_estimate": 105344,
+    "stages": "sensitivity_size",
+    "total_power_estimate_mw": 199.26543102079805
+  },
+  {
+    "amat_ns": 0.2940732527625912,
+    "area_mm2": 32.202529999999996,
+    "config_id": "86a58c526ccee43dd3ac",
+    "data_bytes": 4202496,
+    "demand_energy_nj_per_access": 0.11084039474153398,
+    "l1": "8K-64B-4way-lru",
+    "l1_config": [
+      8,
+      64,
+      4,
+      "lru"
+    ],
+    "l2": "4096K-64B-8way-lru",
+    "l2_config": [
+      4096,
+      64,
+      8,
+      "lru"
+    ],
+    "leakage_mw": 325.85934000000003,
+    "metadata_bytes_estimate": 402304,
+    "stages": "sensitivity_size",
+    "total_power_estimate_mw": 436.69973474153403
+  }
+]

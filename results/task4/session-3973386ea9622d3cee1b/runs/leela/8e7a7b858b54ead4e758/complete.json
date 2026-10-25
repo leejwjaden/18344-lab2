@@ -1,0 +1,21 @@
+{
+  "elapsed_seconds": 479.129953622818,
+  "pintool_sha256": "4534007992459384b29b01c5d773d1097a7491d1e41d319e1be94d9eebd3acee",
+  "stats": {
+    "accesses": 7943358844,
+    "dram_accesses": 22766570,
+    "hits": 7774174158,
+    "l2_accesses": 169184686,
+    "l2_hits": 146418116,
+    "l2_misses": 22766570,
+    "l2_read_hits": 146418116,
+    "l2_reads": 169184686,
+    "l2_write_hits": 0,
+    "l2_writes": 0,
+    "misses": 169184686,
+    "read_hits": 5668584623,
+    "reads": 5802298064,
+    "write_hits": 2105589535,
+    "writes": 2141060780
+  }
+}

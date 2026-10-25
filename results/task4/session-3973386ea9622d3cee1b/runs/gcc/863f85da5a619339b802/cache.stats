@@ -1,0 +1,17 @@
+accesses: 5702338
+hits: 5493267
+misses: 209071
+reads: 3290924
+writes: 2411414
+read_hits: 3137551
+write_hits: 2355716
+miss_rate: 0.0366641
+l2_accesses: 209071
+l2_hits: 174426
+l2_misses: 34645
+l2_reads: 209071
+l2_writes: 0
+l2_read_hits: 174426
+l2_write_hits: 0
+l2_miss_rate: 0.165709
+dram_accesses: 34645
